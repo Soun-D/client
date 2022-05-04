@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
 const Background = styled.div`
@@ -31,20 +31,10 @@ const CloseIcon = styled.button`
   border: none;
 `;
 
-const UrlInput = styled.textarea`
-  width: 400px;
-  height: 200px;
-  resize: none;
-`;
-
-const Modal = ({ urls, onClose }) => {
+const DeleteModal = ({ onClose }) => {
   return (
     <Background onClick={onClose}>
-      <ModalContainer onClick={e => e.stopPropagation()}>
-        <UrlInput
-          placeholder="If you want to enter multiple URLs, separate them with commas"
-          defaultValue={urls.split(",").map((url) => `${url}, `)}
-        ></UrlInput>
+      <ModalContainer onClick={(e) => e.stopPropagation()}>
         <CloseIcon onClick={onClose}>
           <img src="/images/save.svg" alt="" />
         </CloseIcon>
@@ -53,4 +43,4 @@ const Modal = ({ urls, onClose }) => {
   );
 };
 
-export default Modal;
+export default DeleteModal;

@@ -1,8 +1,7 @@
-/*global chrome*/
-
 import React, { useState } from "react";
 import styled from "styled-components";
-import Modal from "./Modal";
+import Modal from './Modal';
+import axios from "axios";
 
 const StyledSsItem = styled.li`
   list-style: none;
@@ -29,7 +28,7 @@ const SelectSound = styled.select`
   height: 20px;
 `;
 
-const SsItemBtns = styled.div`
+const Btns = styled.div`
   display: flex;
 `;
 
@@ -59,57 +58,32 @@ const UrlSpan = styled.span`
   border: 1px solid black;
 `;
 
-const SsItem = ({ ssItem, onRemove }) => {
+const SiteSoundInsert = ({ onRemove }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [urls, setUrls] = useState("");
 
-  const onClose = () => {
-    setModalIsOpen(false);
-  };
-
-  function playSound() {
-    let url = chrome.runtime.getURL("/audio/audio.html");
-
-    // set this string dynamically in your code, this is just an example
-    // this will play success.wav at half the volume and close the popup after a second
-    url += `?volume=1&src=${ssItem.file_location}&length=5000`;
-
-    chrome.windows.create({
-      type: "popup",
-      focused: false,
-      top: 1,
-      left: 1928,
-      height: 1,
-      width: 1,
-      url,
-    });
-  }
+  const saveSiteSound = () => {};
 
   return (
     <StyledSsItem>
-      <UrlSpan>{ssItem.url}</UrlSpan>
+      <UrlSpan>{urls}</UrlSpan>
       <IconZoomIn onClick={() => setModalIsOpen(true)}>
         <img src="/images/edit.svg" alt="" />
       </IconZoomIn>
-      {modalIsOpen ? <Modal urls={ssItem.url} onClose={onClose}></Modal> : null}
-
-      <SelectSound defaultValue="1" name="audiofiles" id="audiofiles">
-        <option value="1">{ssItem.file_name}</option>
+      {modalIsOpen ? <Modal setUrls={setUrls} onClose={() => {setModalIsOpen(false)}}></Modal> : null}
+      <SelectSound defaultValue="" name="audiofiles" id="audiofiles">
+        <option value="1"></option>
       </SelectSound>
-
-      <SsItemBtns>
-        <StyledBtn
-          onClick={() => {
-            playSound(ssItem.file_location);
-          }}
-        >
-          <HoverImage src="/images/headphone.svg" alt="" />
+      <Btns>
+        <StyledBtn onClick={saveSiteSound}>
+          <HoverImage src="/images/save.svg" alt="" />
         </StyledBtn>
         <StyledBtn onClick={onRemove}>
-          <HoverImage src="/images/delete.svg" alt="" />
+          <HoverImage src="/images/x.svg" alt="" />
         </StyledBtn>
-      </SsItemBtns>
+      </Btns>
     </StyledSsItem>
   );
 };
 
-export default SsItem;
+export default SiteSoundInsert;

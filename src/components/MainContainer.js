@@ -1,8 +1,9 @@
 /*global chrome*/
 
-import React from "react";
-import SsItem from "./SsItem";
+import React, { useState, useRef, useEffect } from "react";
+import SiteSound from "./SiteSound";
 import styled from "styled-components";
+import SiteSoundInsert from "./SiteSoundInsert";
 
 const Main = styled.div`
   position: relative;
@@ -17,7 +18,7 @@ const Columns = styled.section`
   font-weight: bold;
 `;
 
-const SsList = styled.div`
+const SiteSoundList = styled.div`
   height: 240px;
   width: 530px;
   overflow-y: auto;
@@ -37,22 +38,42 @@ const PlusBtn = styled.button`
   color: white;
 `;
 
-const MainContainer = ({ ssItems }) => {
-  function onRemove() {
-    console.log("onRemove");
-  }
+const MainContainer = ({ SiteSoundItems, onRemove }) => {
+  const [isEdit, setIsEdit] = useState(false);
+
+  const mainRef = useRef();
+
+  const addSiteSound = () => {
+    setIsEdit(true);
+  };
+
+  useEffect(() => {
+    mainRef.current.scrollTo(0, (SiteSoundItems.length + 1) * 51 * isEdit);
+  }, [isEdit]);
+
   return (
     <Main>
       <Columns>
         <span styles="margin-right: 40px;">URL(S)</span>
         <span>SOUND</span>
       </Columns>
-      <SsList>
-        {ssItems.map((ssItem) => (
-          <SsItem ssItem={ssItem} key={ssItem.id} onRemove={onRemove} />
+      <SiteSoundList ref={mainRef}>
+        {SiteSoundItems.map((SiteSoundItem) => (
+          <SiteSound
+            SiteSoundItem={SiteSoundItem}
+            key={SiteSoundItem.id}
+            onRemove={onRemove}
+          />
         ))}
-      </SsList>
-      <PlusBtn>+</PlusBtn>
+        {isEdit ? (
+          <SiteSoundInsert
+            onRemove={() => {
+              setIsEdit(false);
+            }}
+          ></SiteSoundInsert>
+        ) : null}
+      </SiteSoundList>
+      <PlusBtn onClick={addSiteSound}>+</PlusBtn>
     </Main>
   );
 };

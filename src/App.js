@@ -4,7 +4,8 @@ import "./App.css";
 import MainContainer from "./components/MainContainer";
 import Sidebar from "./components/Sidebar";
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const M = styled.div`
   height: 340px;
@@ -14,32 +15,37 @@ const M = styled.div`
 `;
 
 function App() {
-  const [data, setData] = useState([]);
+  const [siteSounds, setSiteSounds] = useState([]);
 
-  // chrome.identity.getProfileUserInfo((profileUserInfo) =>
-  //   getUrls(profileUserInfo)
-  // );
+  useEffect(() => {
+    getUrls({ email: "kwakdh25@gmail.com" });
+  }, [siteSounds]);
 
-  getUrls({email: "kwakdh25@gmail.com"});
+  const onRemove = (siteSoundId) => {
+    setSiteSounds(
+      siteSounds.filter((siteSound) => siteSound.id != siteSoundId)
+    );
+  };
 
-  async function getUrls(profileUserInfo) {
+  // useEffect(() => {
+  //   chrome.identity.getProfileUserInfo((profileUserInfo) =>
+  //     getUrls(profileUserInfo)
+  //   );
+  // }, [data]);
+
+  const getUrls = async (profileUserInfo) => {
     const url = "http://localhost:8080/site-sound";
     const email = profileUserInfo.email;
 
-    fetch(url + "?email=" + email, {
-      method: "GET",
-      mode: "cors",
-    })
-      .then((res) => res.json())
-      .then((appData) => {
-        setData(appData);
-      });
-  }
+    axios.get(url + "?email=" + email).then((response) => {
+      setSiteSounds(response.data);
+    });
+  };
 
   return (
     <M>
       <Sidebar />
-      <MainContainer ssItems={data} />
+      <MainContainer SiteSoundItems={siteSounds} onRemove={onRemove} />
     </M>
   );
 }
