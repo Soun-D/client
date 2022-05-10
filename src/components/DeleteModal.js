@@ -12,32 +12,50 @@ const Background = styled.div`
 `;
 
 const ModalContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   position: fixed;
   background-color: white;
-  top: 40px;
-  left: 80px;
-  width: 400px;
-  height: 200px;
+  top: 120px;
+  left: 180px;
+  border-radius: 20px;
+  width: 280px;
+  height: 80px;
   z-index: 2;
 `;
 
 const CloseIcon = styled.button`
   background: none;
   box-sizing: border-box;
-  position: absolute;
-  bottom: 7px;
-  left: 337px;
   padding: 1px;
-  border: none;
 `;
 
-const DeleteModal = ({ onClose }) => {
+const BtnContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  width: 60px;
+  height: 40px;
+`;
+
+const AreYouSure = styled.span``;
+
+const DeleteModal = ({ sayYesOrNo }) => {
   return (
-    <Background onClick={onClose}>
+    <Background onClick={sayYesOrNo}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
-        <CloseIcon onClick={onClose}>
-          <img src="/images/save.svg" alt="" />
-        </CloseIcon>
+        <AreYouSure>
+          Are you sure about deleting your
+          <br /> Site Sound?
+        </AreYouSure>
+        <BtnContainer>
+          <CloseIcon onClick={() => sayYesOrNo(true)}>Yes</CloseIcon>
+          <CloseIcon onClick={() => sayYesOrNo(false)}>No</CloseIcon>
+        </BtnContainer>
       </ModalContainer>
     </Background>
   );

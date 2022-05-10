@@ -60,13 +60,19 @@ const UrlSpan = styled.span`
   border: 1px solid black;
 `;
 
-const SiteSound = ({ SiteSoundItem, onRemove }) => {
+const SiteSound = ({ siteSoundItem, audioFiles, onRemove }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
-  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [selectedFile, setSelectedFile] = useState("");
+  const [isEdit, setIsEdit] = useState(false);
 
   const onClose = () => {
     setModalIsOpen(false);
+  };
+
+  const handleSelect = (e) => {
+    setIsEdit(true);
+    setSelectedFile(e.target.value);
   };
 
   const showDeleteModal = () => {
@@ -78,7 +84,7 @@ const SiteSound = ({ SiteSoundItem, onRemove }) => {
 
     // set this string dynamically in your code, this is just an example
     // this will play success.wav at half the volume and close the popup after a second
-    url += `?volume=1&src=${SiteSoundItem.file_location}&length=5000`;
+    url += `?volume=1&src=${siteSoundItem.file_location}&length=5000`;
 
     chrome.windows.create({
       type: "popup",
@@ -91,31 +97,42 @@ const SiteSound = ({ SiteSoundItem, onRemove }) => {
     });
   };
 
+  const sayYesOrNo = (b) => {
+    setDeleteModalIsOpen(false);
+    if (b) {
+      onRemove(siteSoundItem.id);
+    }
+  };
+
   return (
     <StyledSsItem>
-      <UrlSpan>{SiteSoundItem.url}</UrlSpan>
+      <UrlSpan>{siteSoundItem.url}</UrlSpan>
       <IconZoomIn onClick={() => setModalIsOpen(true)}>
         <img src="/images/edit.svg" alt="" />
       </IconZoomIn>
       {modalIsOpen ? (
-        <Modal urls={SiteSoundItem.url} onClose={onClose}></Modal>
+        <Modal urls={siteSoundItem.url} onClose={onClose}></Modal>
       ) : null}
       {deleteModalIsOpen ? (
-        <DeleteModal
-          onClose={() => {
-            setDeleteModalIsOpen(false);
-          }}
-        ></DeleteModal>
+        <DeleteModal sayYesOrNo={sayYesOrNo}></DeleteModal>
       ) : null}
 
-      <SelectSound defaultValue="1" name="audiofiles" id="audiofiles">
-        <option value="1">{SiteSoundItem.file_name}</option>
+      <SelectSound
+        defaultValue={siteSoundItem.file_name}
+        name="audiofiles"
+        onChange={handleSelect}
+      >
+        {audioFiles.map((audioFile) => (
+          <option key={audioFile.id} value={audioFile.file_name}>
+            {audioFile.file_name}
+          </option>
+        ))}
       </SelectSound>
 
       <Btns>
         <StyledBtn
           onClick={() => {
-            playSound(SiteSoundItem.file_location);
+            playSound(siteSoundItem.file_location);
           }}
         >
           <HoverImage src="/images/headphone.svg" alt="" />

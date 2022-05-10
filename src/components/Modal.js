@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Background = styled.div`
@@ -37,13 +37,20 @@ const UrlInput = styled.textarea`
   resize: none;
 `;
 
-const Modal = ({ urls, onClose }) => {
+const Modal = ({ urls, onUrlChange, onClose }) => {
+  const [inputValue, setInputValue] = useState("");
+
+  useEffect(() => {
+    setInputValue(urls);
+  }, []);
+
   return (
     <Background onClick={onClose}>
-      <ModalContainer onClick={e => e.stopPropagation()}>
+      <ModalContainer onClick={(e) => e.stopPropagation()}>
         <UrlInput
           placeholder="If you want to enter multiple URLs, separate them with commas"
-          defaultValue={urls.split(",").map((url) => `${url}, `)}
+          defaultValue={inputValue}
+          onChange={onUrlChange}
         ></UrlInput>
         <CloseIcon onClick={onClose}>
           <img src="/images/save.svg" alt="" />

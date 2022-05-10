@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import Modal from './Modal';
+import Modal from "./Modal";
 import axios from "axios";
 
 const StyledSsItem = styled.li`
@@ -58,11 +58,36 @@ const UrlSpan = styled.span`
   border: 1px solid black;
 `;
 
-const SiteSoundInsert = ({ onRemove }) => {
+const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [fileId, setFileId] = useState("");
   const [urls, setUrls] = useState("");
 
-  const saveSiteSound = () => {};
+  const host = "http://localhost:8080";
+
+  const handleSelect = (e) => {
+    const selectedIndex = e.target.options.selectedIndex;
+    setFileId(e.target.options[selectedIndex].getAttribute("data-key"));
+  };
+
+  const onUrlChange = (e) => {
+    setUrls(e.target.value);
+  };
+
+  const saveSiteSound = () => {
+    if (!urls.replace(/ /g, "")) {
+      alert("url is empty");
+      return;
+    } else if (!fileId) {
+      alert("fileId is empty");
+      return;
+    }
+    axios.post(host + "/site-sound", {
+      url: urls,
+      audio_file_id: fileId,
+    }).then(() => refresh());
+    onRemove();
+  };
 
   return (
     <StyledSsItem>
@@ -70,9 +95,26 @@ const SiteSoundInsert = ({ onRemove }) => {
       <IconZoomIn onClick={() => setModalIsOpen(true)}>
         <img src="/images/edit.svg" alt="" />
       </IconZoomIn>
-      {modalIsOpen ? <Modal setUrls={setUrls} onClose={() => {setModalIsOpen(false)}}></Modal> : null}
-      <SelectSound defaultValue="" name="audiofiles" id="audiofiles">
-        <option value="1"></option>
+      {modalIsOpen ? (
+        <Modal
+          onUrlChange={onUrlChange}
+          onClose={() => {
+            setModalIsOpen(false);
+          }}
+          urls={urls}
+        ></Modal>
+      ) : null}
+      <SelectSound defaultValue="" name="audiofiles" onChange={handleSelect}>
+        <option disabled hidden value=""></option>
+        {audioFiles.map((audioFile) => (
+          <option
+            key={audioFile.id}
+            value={audioFile.file_name}
+            data-key={audioFile.id}
+          >
+            {audioFile.file_name}
+          </option>
+        ))}
       </SelectSound>
       <Btns>
         <StyledBtn onClick={saveSiteSound}>

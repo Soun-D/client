@@ -1,5 +1,3 @@
-/*global chrome*/
-
 import React, { useState, useRef, useEffect } from "react";
 import SiteSound from "./SiteSound";
 import styled from "styled-components";
@@ -38,12 +36,17 @@ const PlusBtn = styled.button`
   color: white;
 `;
 
-const MainContainer = ({ SiteSoundItems, onRemove }) => {
+const MainContainer = ({
+  SiteSoundItems,
+  audioFiles,
+  onRemove,
+  refresh
+}) => {
   const [isEdit, setIsEdit] = useState(false);
 
   const mainRef = useRef();
 
-  const addSiteSound = () => {
+  const onEditSiteSound = () => {
     setIsEdit(true);
   };
 
@@ -60,7 +63,8 @@ const MainContainer = ({ SiteSoundItems, onRemove }) => {
       <SiteSoundList ref={mainRef}>
         {SiteSoundItems.map((SiteSoundItem) => (
           <SiteSound
-            SiteSoundItem={SiteSoundItem}
+            siteSoundItem={SiteSoundItem}
+            audioFiles={audioFiles}
             key={SiteSoundItem.id}
             onRemove={onRemove}
           />
@@ -70,10 +74,12 @@ const MainContainer = ({ SiteSoundItems, onRemove }) => {
             onRemove={() => {
               setIsEdit(false);
             }}
+            audioFiles={audioFiles}
+            refresh={refresh}
           ></SiteSoundInsert>
         ) : null}
       </SiteSoundList>
-      <PlusBtn onClick={addSiteSound}>+</PlusBtn>
+      <PlusBtn onClick={onEditSiteSound}>+</PlusBtn>
     </Main>
   );
 };
