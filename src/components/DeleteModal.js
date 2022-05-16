@@ -46,7 +46,7 @@ const AreYouSure = styled.span``;
 
 const DeleteModal = ({ sayYesOrNo }) => {
   return (
-    <Background onClick={sayYesOrNo}>
+    <Background onClick={() => sayYesOrNo(false)}>
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <AreYouSure>
           Are you sure about deleting your

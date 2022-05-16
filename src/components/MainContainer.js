@@ -34,14 +34,10 @@ const PlusBtn = styled.button`
   bottom: 0;
   background-color: black;
   color: white;
+  cursor: pointer;
 `;
 
-const MainContainer = ({
-  SiteSoundItems,
-  audioFiles,
-  onRemove,
-  refresh
-}) => {
+const MainContainer = ({ SiteSoundItems, audioFiles, onRemove, refresh }) => {
   const [isEdit, setIsEdit] = useState(false);
 
   const mainRef = useRef();
@@ -67,6 +63,7 @@ const MainContainer = ({
             audioFiles={audioFiles}
             key={SiteSoundItem.id}
             onRemove={onRemove}
+            refresh={refresh}
           />
         ))}
         {isEdit ? (

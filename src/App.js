@@ -1,11 +1,16 @@
-/*global chrome*/
-
 import "./App.css";
 import MainContainer from "./components/MainContainer";
 import Sidebar from "./components/Sidebar";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import {
+  deleteSiteSound,
+  audioFileList,
+  siteSoundList,
+} from "./components/api";
+import AudioList from "./components/AudioList";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import Spinner from "./components/Spinner";
 
 const M = styled.div`
   height: 340px;
@@ -14,12 +19,12 @@ const M = styled.div`
   border: solid 2px black;
 `;
 
-function App() {
+const App = () => {
   const [email, setEmail] = useState();
   const [siteSounds, setSiteSounds] = useState([]);
   const [audioFiles, setAudioFiles] = useState([]);
   const [refresh, setRefresh] = useState(false);
-  const host = "http://localhost:8080";
+  const [loading, setLoading] = useState(true);
 
   // useEffect(() =>
   //   chrome.identity.getProfileUserInfo((profileUserInfo) =>
@@ -34,17 +39,21 @@ function App() {
   useEffect(() => {
     getUrls();
     getAudioFiles();
-    console.log(dataRefresh);
   }, [email, refresh]);
 
+  useEffect(() => {
+    setLoading(false);
+    console.log(window.location.pathname);
+
+  }, [audioFiles, siteSounds]);
+
   const dataRefresh = () => {
+    setLoading(false);
     setRefresh(!refresh);
-    console.log('refresh');
-    // window.location.reload(false);
   };
 
   const getUrls = async () => {
-    const response = await axios.get(host + "/site-sound?email=" + email);
+    const response = await siteSoundList(email);
     setSiteSounds(response.data);
   };
 
@@ -52,31 +61,67 @@ function App() {
     setSiteSounds(
       siteSounds.filter((siteSound) => siteSound.id !== siteSoundId)
     );
-    axios
-      .delete(host + "/site-sound", {
-        data: { site_sound_id: siteSoundId },
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    deleteSiteSound(siteSoundId);
   };
 
   const getAudioFiles = async () => {
-    axios.get(host + "/audio-file?email=" + email).then((response) => {
-      setAudioFiles(response.data);
-    });
+    const response = await audioFileList(email);
+    setAudioFiles(response.data);
   };
+
   return (
-    <M>
-      <Sidebar />
-      <MainContainer
-        SiteSoundItems={siteSounds}
-        audioFiles={audioFiles}
-        onRemove={onRemove}
-        refresh={dataRefresh}
-      />
-    </M>
+    <BrowserRouter>
+      <M>
+        <Sidebar />
+        <Routes>
+          <Route
+            path="/index.html"
+            element={
+              loading ? (
+                <Spinner />
+              ) : (
+                <MainContainer
+                  SiteSoundItems={siteSounds}
+                  audioFiles={audioFiles}
+                  onRemove={onRemove}
+                  refresh={dataRefresh}
+                />
+              )
+            }
+          />
+          <Route
+            path="/"
+            element={
+              loading ? (
+                <Spinner />
+              ) : (
+                <MainContainer
+                  SiteSoundItems={siteSounds}
+                  audioFiles={audioFiles}
+                  onRemove={onRemove}
+                  refresh={dataRefresh}
+                />
+              )
+            }
+          />
+          <Route
+            path="/audio"
+            element={
+              loading ? (
+                <Spinner></Spinner>
+              ) : (
+                <AudioList
+                  audioList={audioFiles}
+                  refresh={dataRefresh}
+                  email={email}
+                />
+              )
+            }
+          />
+        </Routes>
+      </M>
+    </BrowserRouter>
   );
-}
+};
 
 export default App;

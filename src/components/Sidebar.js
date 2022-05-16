@@ -1,7 +1,6 @@
-/*global chrome*/
-
 import React from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 const StyledSidebar = styled.div`
   display: flex;
@@ -18,8 +17,9 @@ const StyledBtn = styled.button`
   border: none;
   padding: 3px 3px 0px 0px;
   box-sizing: border-box;
+  cursor: pointer;
   &:hover {
-      color: black;
+    color: black;
   }
 `;
 
@@ -34,12 +34,17 @@ const Sidebar = () => {
   return (
     <StyledSidebar>
       <Menu>
-        <StyledBtn>
-          <img src="/images/home.svg" alt="" />
-        </StyledBtn>
-        <StyledBtn>
-          <img src="/images/mp3file.svg" alt="" />
-        </StyledBtn>
+        <Link to="/index.html">
+          <StyledBtn>
+            <img src="/images/home.svg" alt="" />
+          </StyledBtn>
+        </Link>
+
+        <Link to="/audio">
+          <StyledBtn>
+            <img src="/images/mp3file.svg" alt="" />
+          </StyledBtn>
+        </Link>
       </Menu>
       <Menu>
         <StyledBtn>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Modal from "./Modal";
-import axios from "axios";
+import { postSiteSound } from "./api";
 
 const StyledSsItem = styled.li`
   list-style: none;
@@ -63,15 +63,19 @@ const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
   const [fileId, setFileId] = useState("");
   const [urls, setUrls] = useState("");
 
-  const host = "http://localhost:8080";
-
   const handleSelect = (e) => {
     const selectedIndex = e.target.options.selectedIndex;
     setFileId(e.target.options[selectedIndex].getAttribute("data-key"));
   };
 
   const onUrlChange = (e) => {
-    setUrls(e.target.value);
+    if (e.target.value.length > 2000) {
+      alert("최대 2000자 까지");
+      setUrls(e.target.value.substr(0, 2000));
+      console.log(e.target.value.substr(0, 2000));
+    } else {
+      setUrls(e.target.value);
+    }
   };
 
   const saveSiteSound = () => {
@@ -82,11 +86,24 @@ const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
       alert("fileId is empty");
       return;
     }
-    axios.post(host + "/site-sound", {
+    postSiteSound({
       url: urls,
       audio_file_id: fileId,
-    }).then(() => refresh());
-    onRemove();
+    })
+      .then(() => {
+        refresh();
+        onRemove();
+      })
+      .catch((error) => {
+        if (error.response.status === 400) {
+          alert("URL 형식을 똑바로 하길 바랍니다");
+          console.log(error);
+        } else if (error.response.status === 409) {
+          alert("중복된 URL이 있다.");
+        } else {
+          console.log(error);
+        }
+      });
   };
 
   return (
@@ -99,6 +116,10 @@ const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
         <Modal
           onUrlChange={onUrlChange}
           onClose={() => {
+            setModalIsOpen(false);
+            setUrls("");
+          }}
+          onSave={() => {
             setModalIsOpen(false);
           }}
           urls={urls}

@@ -20,7 +20,7 @@ const ModalContainer = styled.div`
   height: 200px;
   z-index: 2;
 `;
-
+ 
 const CloseIcon = styled.button`
   background: none;
   box-sizing: border-box;
@@ -37,7 +37,7 @@ const UrlInput = styled.textarea`
   resize: none;
 `;
 
-const Modal = ({ urls, onUrlChange, onClose }) => {
+const Modal = ({ urls, onUrlChange, onClose, onSave }) => {
   const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
@@ -45,14 +45,20 @@ const Modal = ({ urls, onUrlChange, onClose }) => {
   }, []);
 
   return (
-    <Background onClick={onClose}>
+    <Background
+      onClick={() => {
+        onClose();
+        console.log(urls);
+      }}
+    >
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <UrlInput
           placeholder="If you want to enter multiple URLs, separate them with commas"
           defaultValue={inputValue}
           onChange={onUrlChange}
+          maxLength="2000"
         ></UrlInput>
-        <CloseIcon onClick={onClose}>
+        <CloseIcon onClick={onSave}>
           <img src="/images/save.svg" alt="" />
         </CloseIcon>
       </ModalContainer>

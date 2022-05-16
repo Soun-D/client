@@ -1,16 +1,16 @@
 chrome.identity.getProfileUserInfo(async (profileUserInfo) => {
   const email = profileUserInfo.email;
   const host = "http://localhost:8080";
-  const response = await fetch(host + "/site-sound?email=" + email);
-  const siteSoundList = await response.json();
 
-  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     // console.log(changeInfo.status + " " + changeInfo.url);
-
+    const response = await fetch(host + "/site-sound/split?email=" + email, {
+      mode: "cors",
+    });
+    const siteSoundList = await response.json();
     if (changeInfo.status == "loading") {
       siteSoundList.forEach((ss) => {
-        if (changeInfo.url == ss.url)
-          playSound(ss.file_location);
+        if (changeInfo.url == ss.url) playSound(ss.file_location);
       });
     }
   });
