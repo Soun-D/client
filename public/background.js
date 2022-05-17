@@ -21,7 +21,7 @@ function playSound(src) {
 
   // set this string dynamically in your code, this is just an example
   // this will play success.wav at half the volume and close the popup after a second
-  url += `?volume=1&src=${src}&length=5000`;
+  url += `?volume=1&src=${src}&length=10000`;
 
   chrome.windows.create({
     type: "popup",

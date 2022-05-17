@@ -48,12 +48,11 @@ const Modal = ({ urls, onUrlChange, onClose, onSave }) => {
     <Background
       onClick={() => {
         onClose();
-        console.log(urls);
       }}
     >
       <ModalContainer onClick={(e) => e.stopPropagation()}>
         <UrlInput
-          placeholder="If you want to enter multiple URLs, separate them with commas"
+          placeholder="If you want to enter multiple URLs, separate them with comma"
           defaultValue={inputValue}
           onChange={onUrlChange}
           maxLength="2000"

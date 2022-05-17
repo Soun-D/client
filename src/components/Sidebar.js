@@ -47,12 +47,11 @@ const Sidebar = () => {
         </Link>
       </Menu>
       <Menu>
-        <StyledBtn>
-          <img src="/images/refresh.svg" alt="" />
-        </StyledBtn>
-        <StyledBtn>
-          <img src="/images/help.svg" alt="" />
-        </StyledBtn>
+        <Link to="/help">
+          <StyledBtn>
+            <img src="/images/help.svg" alt="" />
+          </StyledBtn>
+        </Link>
       </Menu>
     </StyledSidebar>
   );

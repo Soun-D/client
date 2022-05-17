@@ -1,5 +1,8 @@
+/*global chrome*/
+
 import "./App.css";
 import MainContainer from "./components/MainContainer";
+import Helper from "./components/Helper";
 import Sidebar from "./components/Sidebar";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
@@ -26,15 +29,11 @@ const App = () => {
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // useEffect(() =>
-  //   chrome.identity.getProfileUserInfo((profileUserInfo) =>
-  //     setEmail(profileUserInfo.email)
-  //   )
-  // );
-
-  useEffect(() => {
-    setEmail("kwakdh25@gmail.com");
-  }, []);
+  useEffect(() =>
+    chrome.identity.getProfileUserInfo((profileUserInfo) =>
+      setEmail(profileUserInfo.email)
+    )
+  );
 
   useEffect(() => {
     getUrls();
@@ -43,8 +42,6 @@ const App = () => {
 
   useEffect(() => {
     setLoading(false);
-    console.log(window.location.pathname);
-
   }, [audioFiles, siteSounds]);
 
   const dataRefresh = () => {
@@ -58,10 +55,11 @@ const App = () => {
   };
 
   const onRemove = (siteSoundId) => {
-    setSiteSounds(
-      siteSounds.filter((siteSound) => siteSound.id !== siteSoundId)
+    deleteSiteSound(siteSoundId).then(() =>
+      setSiteSounds(
+        siteSounds.filter((siteSound) => siteSound.id !== siteSoundId)
+      )
     );
-    deleteSiteSound(siteSoundId);
   };
 
   const getAudioFiles = async () => {
@@ -118,6 +116,7 @@ const App = () => {
               )
             }
           />
+          <Route path="/help" element={<Helper />}></Route>
         </Routes>
       </M>
     </BrowserRouter>

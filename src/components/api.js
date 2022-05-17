@@ -7,7 +7,7 @@ export const siteSoundList = async (email) => {
 };
 
 export const deleteSiteSound = (siteSoundId) => {
-  axios.delete(host + "/site-sound", {
+  return axios.delete(host + "/site-sound", {
     data: { id: siteSoundId },
   });
 };

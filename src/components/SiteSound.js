@@ -1,6 +1,6 @@
 /*global chrome*/
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import DeleteModal from "./DeleteModal";
 import Modal from "./Modal";
@@ -62,65 +62,47 @@ const UrlSpan = styled.span`
   border: 1px solid black;
 `;
 
-const SiteSound = ({ siteSoundItem, audioFiles, onRemove }) => {
+const SiteSound = ({ siteSoundItem, audioFiles, onRemove, refresh }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
 
-  const [isUrlChange, setIsUrlChange] = useState(false);
-  const [isFileChange, setIsFileChange] = useState(false);
-
-  const [urls, setUrls] = useState("");
-  const [fileId, setFileId] = useState("");
-  const [filename, setFilename] = useState("");
-  const [fileLocation, setFileLocation] = useState("");
+  const [urls, setUrls] = useState(siteSoundItem.url);
+  const [fileId, setFileId] = useState(siteSoundItem.file_id);
+  const [filename, setFilename] = useState(siteSoundItem.file_name);
 
   const [copyUrl, setCopyUrl] = useState(siteSoundItem.url);
-
-  useEffect(() => {
-    setUrls(siteSoundItem.url);
-    setFilename(siteSoundItem.file_name);
-    setFileId(siteSoundItem.file_id);
-    setFileLocation(siteSoundItem.file_location);
-  }, []);
 
   const handleFilename = (e) => {
     setFilename(e.target.value);
     const selectedIndex = e.target.options.selectedIndex;
-    const fileIndex = e.target.options[selectedIndex].getAttribute("data-key");
-    const src = e.target.options[selectedIndex].getAttribute("src");
-
-    if (siteSoundItem.file_id != fileIndex) {
-      console.log(siteSoundItem.file_id, fileIndex, selectedIndex);
-      setIsFileChange(true);
-      setFileId(fileIndex);
-      setFileLocation(src);
-      console.log(src);
-    } else {
-      setIsFileChange(false);
-    }
+    setFileId(e.target.options[selectedIndex].getAttribute("data-key"));
   };
 
   const onUrlChange = (e) => {
-    console.log(copyUrl);
-    if (e.target.value !== siteSoundItem.url) {
+    if (e.target.value !== copyUrl)
       setUrls(e.target.value);
-      setIsUrlChange(true);
-    } else {
-      setIsUrlChange(false);
+  };
+
+  const sayYesOrNo = (choice) => {
+    setDeleteModalIsOpen(false);
+    if (choice) {
+      onRemove(siteSoundItem.id);
     }
   };
 
-  const checkUrlChange = () => {
-    if (copyUrl !== siteSoundItem.url) {
-      setIsUrlChange(true);
-    } else {
-      setIsUrlChange(false);
-    }
+  const onModalSave = () => {
+    setCopyUrl(urls);
+    setModalIsOpen(false);
   };
 
-  const updateSiteSound = () => {
+  const onClickBackground = () => {
+    setModalIsOpen(false);
+    setUrls(copyUrl);
+  };
+
+  const onSave = () => {
     if (!urls.replace(/ /g, "")) {
-      alert("url is empty");
+      alert("URL 입력란을 채워주세요");
       return;
     }
     putSiteSound({
@@ -128,47 +110,23 @@ const SiteSound = ({ siteSoundItem, audioFiles, onRemove }) => {
       url: urls,
       audio_file_id: fileId,
     })
-      .then(() => {
-        setIsUrlChange(false);
-        setIsFileChange(false);
-      })
+      .then(() => refresh())
       .catch((error) => {
         if (error.response.status === 409) {
-          alert("중복된 URL이 있다.");
+          alert("중복된 URL이 있습니다!");
         } else if (error.response.status === 400) {
-          alert("URL형식을 지키길 바란다.");
+          alert("URL형식을 맞춰주세요!");
         } else {
-          console.log(console.error());
+          console.log(error);
         }
       });
   };
 
-  const showDeleteModal = () => {
-    setDeleteModalIsOpen(true);
-  };
-
-  const sayYesOrNo = (b) => {
-    setDeleteModalIsOpen(false);
-    if (b) onRemove(siteSoundItem.id);
-  };
-
-  const onClickBackground = () => {
-    checkUrlChange();
-    setModalIsOpen(false);
-    setUrls(copyUrl);
-  };
-
   const onCancel = () => {
-    setIsUrlChange(false);
-    setIsFileChange(false);
+    setCopyUrl(siteSoundItem.url);
     setUrls(siteSoundItem.url);
+    setFileId(siteSoundItem.file_id);
     setFilename(siteSoundItem.file_name);
-  };
-
-  const onSave = () => {
-    setCopyUrl(urls);
-    console.log(copyUrl);
-    setModalIsOpen(false);
   };
 
   return (
@@ -183,7 +141,7 @@ const SiteSound = ({ siteSoundItem, audioFiles, onRemove }) => {
           urls={urls}
           onUrlChange={onUrlChange}
           onClose={onClickBackground}
-          onSave={onSave}
+          onSave={onModalSave}
         ></Modal>
       ) : null}
 
@@ -197,16 +155,15 @@ const SiteSound = ({ siteSoundItem, audioFiles, onRemove }) => {
             key={audioFile.id}
             value={audioFile.file_name}
             data-key={audioFile.id}
-            src={audioFile.file_location}
           >
             {audioFile.file_name}
           </option>
         ))}
       </SelectSound>
 
-      {isUrlChange || isFileChange ? (
+      {copyUrl !== siteSoundItem.url || fileId != siteSoundItem.file_id ? (
         <Btns>
-          <StyledBtn onClick={updateSiteSound}>
+          <StyledBtn onClick={onSave}>
             <HoverImage src="/images/save.svg" alt="" />
           </StyledBtn>
           <StyledBtn onClick={onCancel}>
@@ -216,7 +173,7 @@ const SiteSound = ({ siteSoundItem, audioFiles, onRemove }) => {
       ) : (
         <Btns>
           <HeadsetBtn fileLocation={siteSoundItem.file_location}></HeadsetBtn>
-          <StyledBtn onClick={showDeleteModal}>
+          <StyledBtn onClick={() => setDeleteModalIsOpen(true)}>
             <HoverImage src="/images/delete.svg" alt="" />
           </StyledBtn>
         </Btns>

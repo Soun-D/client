@@ -70,7 +70,7 @@ const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
 
   const onUrlChange = (e) => {
     if (e.target.value.length > 2000) {
-      alert("최대 2000자 까지");
+      alert("최대 2000자 까지 입력할 수 있습니다!");
       setUrls(e.target.value.substr(0, 2000));
       console.log(e.target.value.substr(0, 2000));
     } else {
@@ -80,10 +80,10 @@ const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
 
   const saveSiteSound = () => {
     if (!urls.replace(/ /g, "")) {
-      alert("url is empty");
+      alert("URL 입력란을 채워주세요");
       return;
     } else if (!fileId) {
-      alert("fileId is empty");
+      alert("오디오 파일을 업로드하거나 목록에서 선택해주세요");
       return;
     }
     postSiteSound({
@@ -96,10 +96,10 @@ const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
       })
       .catch((error) => {
         if (error.response.status === 400) {
-          alert("URL 형식을 똑바로 하길 바랍니다");
+          alert("URL 형식을 맞춰주세요");
           console.log(error);
         } else if (error.response.status === 409) {
-          alert("중복된 URL이 있다.");
+          alert("중복된 URL이 존재합니다!");
         } else {
           console.log(error);
         }
