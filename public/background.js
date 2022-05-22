@@ -1,9 +1,8 @@
 chrome.identity.getProfileUserInfo(async (profileUserInfo) => {
   const email = profileUserInfo.email;
-  const host = "http://localhost:8080";
+  const host = "https://api.portfolist.kr";
 
   chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    // console.log(changeInfo.status + " " + changeInfo.url);
     const response = await fetch(host + "/site-sound/split?email=" + email, {
       mode: "cors",
     });

@@ -1,15 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Soun-D, Sounds in life",
-  "description": "Soun-D website sounds chrome extension",
-  "version": "1.0",
+  "name": "Soun-D",
+  "description": "You can upload MP3, M4A files and play sound when the URL matches when you access the website.",
+  "version": "0.0.0.1",
   "background": {
     "service_worker": "./background.js"
   },
   "permissions": [
-    "storage",
-    "activeTab",
-    "scripting",
     "tabs",
     "identity",
     "identity.email"
@@ -19,16 +16,16 @@
     "default_popup": "index.html",
     "default_title": "Soun-D",
     "default_icon": {
-      "16": "/images/get_started16.png",
-      "32": "/images/get_started32.png",
-      "48": "/images/get_started48.png",
-      "128": "/images/get_started128.png"
+      "16": "/images/soun-d-icon16.png",
+      "32": "/images/soun-d-icon32.png",
+      "48": "/images/soun-d-icon48.png",
+      "128": "/images/soun-d-icon128.png"
     }
   },
   "icons": {
-    "16": "/images/get_started16.png",
-    "32": "/images/get_started32.png",
-    "48": "/images/get_started48.png",
-    "128": "/images/get_started128.png"
+    "16": "/images/soun-d-icon16.png",
+    "32": "/images/soun-d-icon32.png",
+    "48": "/images/soun-d-icon48.png",
+    "128": "/images/soun-d-icon128.png"
   }
 }

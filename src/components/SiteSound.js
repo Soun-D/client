@@ -172,7 +172,7 @@ const SiteSound = ({ siteSoundItem, audioFiles, onRemove, refresh }) => {
         </Btns>
       ) : (
         <Btns>
-          <HeadsetBtn fileLocation={siteSoundItem.file_location}></HeadsetBtn>
+          <HeadsetBtn src={siteSoundItem.file_location} len={10000}></HeadsetBtn>
           <StyledBtn onClick={() => setDeleteModalIsOpen(true)}>
             <HoverImage src="/images/delete.svg" alt="" />
           </StyledBtn>

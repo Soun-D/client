@@ -13,7 +13,7 @@ const AudioItem = styled.div`
   position: relative;
   justify-content: center;
   align-items: center;
-  width: 558px;
+  width: 100%;
   height: 40px;
   border: 1px solid black;
 `;
@@ -81,7 +81,6 @@ const AudioList = ({ audioList, email, refresh }) => {
   };
 
   const handleFileInput = (e) => {
-    console.log(e.target.files[0].name);
     const file = e.target.files[0];
     if (file.size > 5 * 1024 * 1024) {
       alert("5MB 이하로 파일을 업로드 해주세요");
@@ -104,6 +103,7 @@ const AudioList = ({ audioList, email, refresh }) => {
         [
           JSON.stringify({
             email: email,
+            len: null,
           }),
         ],
         { type: "application/json" }
@@ -132,7 +132,7 @@ const AudioList = ({ audioList, email, refresh }) => {
         return (
           <AudioItem key={audio.id}>
             <FileName>{audio.file_name}</FileName>
-            <HeadsetBtn fileLocation={audio.file_location}></HeadsetBtn>
+            <HeadsetBtn src={audio.file_location} len={audio.len}></HeadsetBtn>
             <CancelBtn onClick={() => onRemove(audio.id)}>
               <HoverImage src="/images/x.svg" alt="" />
             </CancelBtn>
@@ -146,7 +146,6 @@ const AudioList = ({ audioList, email, refresh }) => {
         ref={fileInput}
       ></InputFile>
       <PlusBtn onClick={handleFilePost}>
-        MP3, M4A
         <img src="/images/add_icon.svg"></img>
       </PlusBtn>
     </AudioContainer>

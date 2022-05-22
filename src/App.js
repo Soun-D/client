@@ -16,8 +16,8 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Spinner from "./components/Spinner";
 
 const M = styled.div`
-  height: 340px;
-  width: 610px;
+  height: 400px;
+  width: 640px;
   display: flex;
   border: solid 2px black;
 `;

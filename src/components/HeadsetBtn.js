@@ -19,13 +19,12 @@ const HoverImage = styled.img`
   }
 `;
 
-const HeadsetBtn = (fileLocation) => {
-    
+const HeadsetBtn = ({src, len}) => {
   const playSound = () => {
     let url = chrome.runtime.getURL("/audio/audio.html");
     // set this string dynamically in your code, this is just an example
     // this will play success.wav at half the volume and close the popup after a second
-    url += `?src=${fileLocation.fileLocation}&length=10000`;
+    url += `?src=${src}&length=${len}`;
 
     chrome.windows.create({
       type: "popup",

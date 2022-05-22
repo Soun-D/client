@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const host = "http://localhost:8080";
+const host = "https://api.portfolist.kr";
 
 export const siteSoundList = async (email) => {
   return axios.get(host + "/site-sound?email=" + email);
