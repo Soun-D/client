@@ -34,6 +34,7 @@ const Sidebar = () => {
   return (
     <StyledSidebar>
       <Menu>
+        
         <Link to="/index.html">
           <StyledBtn>
             <img src="/images/home.svg" alt="" />
@@ -45,6 +46,13 @@ const Sidebar = () => {
             <img src="/images/mp3file.svg" alt="" />
           </StyledBtn>
         </Link>
+
+        <Link to="/youtube">
+          <StyledBtn>
+            <img src="/images/yotube_icon.png" alt="" />
+          </StyledBtn>
+        </Link>
+
       </Menu>
       <Menu>
         <Link to="/help">

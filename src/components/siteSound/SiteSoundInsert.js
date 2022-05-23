@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Modal from "./Modal";
-import { postSiteSound } from "./api";
+import { postSiteSound } from "../utils/api";
 
 const StyledSsItem = styled.li`
   list-style: none;
@@ -72,7 +72,6 @@ const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
     if (e.target.value.length > 2000) {
       alert("최대 2000자 까지 입력할 수 있습니다!");
       setUrls(e.target.value.substr(0, 2000));
-      console.log(e.target.value.substr(0, 2000));
     } else {
       setUrls(e.target.value);
     }
@@ -130,10 +129,10 @@ const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
         {audioFiles.map((audioFile) => (
           <option
             key={audioFile.id}
-            value={audioFile.file_name}
+            value={audioFile.title}
             data-key={audioFile.id}
           >
-            {audioFile.file_name}
+            {audioFile.title}
           </option>
         ))}
       </SelectSound>

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-import { deleteAudioFile, postMp3 } from "./api";
-import HeadsetBtn from "./HeadsetBtn";
+import { deleteAudioFile, postMp3 } from '../utils/api';
+import HeadsetBtn from '../utils/HeadsetBtn';
 
 const AudioContainer = styled.div`
   width: 100%;
@@ -36,7 +36,7 @@ const HoverImage = styled.img`
   }
 `;
 
-const FileName = styled.b`
+const TitleB = styled.b`
   margin-right: 10px;
 `;
 
@@ -103,7 +103,7 @@ const AudioList = ({ audioList, email, refresh }) => {
         [
           JSON.stringify({
             email: email,
-            len: null,
+            play_time: 10000
           }),
         ],
         { type: "application/json" }
@@ -117,7 +117,7 @@ const AudioList = ({ audioList, email, refresh }) => {
       })
       .catch((error) => {
         if (error.response.status === 400) {
-          alert("MP3 또는 M4A 파일을 업로드해주세요");
+          alert("400: Bad Request.");
         } else if (error.response.status === 409) {
           alert("동일한 이름의 파일이 이미 존재합니다. \n");
         } else {
@@ -131,8 +131,8 @@ const AudioList = ({ audioList, email, refresh }) => {
       {audioList.map((audio) => {
         return (
           <AudioItem key={audio.id}>
-            <FileName>{audio.file_name}</FileName>
-            <HeadsetBtn src={audio.file_location} len={audio.len}></HeadsetBtn>
+            <TitleB>{audio.title}</TitleB>
+            <HeadsetBtn src={audio.src} len={audio.play_time}></HeadsetBtn>
             <CancelBtn onClick={() => onRemove(audio.id)}>
               <HoverImage src="/images/x.svg" alt="" />
             </CancelBtn>
@@ -146,7 +146,7 @@ const AudioList = ({ audioList, email, refresh }) => {
         ref={fileInput}
       ></InputFile>
       <PlusBtn onClick={handleFilePost}>
-        <img src="/images/add_icon.svg"></img>
+        <img src="/images/add_icon.svg" alt=""></img>
       </PlusBtn>
     </AudioContainer>
   );

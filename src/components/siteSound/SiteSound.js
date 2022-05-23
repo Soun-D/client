@@ -1,11 +1,9 @@
-/*global chrome*/
-
 import React, { useState } from "react";
 import styled from "styled-components";
 import DeleteModal from "./DeleteModal";
 import Modal from "./Modal";
-import { putSiteSound } from "./api";
-import HeadsetBtn from "./HeadsetBtn";
+import { putSiteSound } from "../utils/api";
+import HeadsetBtn from "../utils/HeadsetBtn";
 
 const StyledSsItem = styled.li`
   list-style: none;
@@ -68,12 +66,12 @@ const SiteSound = ({ siteSoundItem, audioFiles, onRemove, refresh }) => {
 
   const [urls, setUrls] = useState(siteSoundItem.url);
   const [fileId, setFileId] = useState(siteSoundItem.file_id);
-  const [filename, setFilename] = useState(siteSoundItem.file_name);
+  const [title, setTitle] = useState(siteSoundItem.title);
 
   const [copyUrl, setCopyUrl] = useState(siteSoundItem.url);
 
-  const handleFilename = (e) => {
-    setFilename(e.target.value);
+  const handleTitle = (e) => {
+    setTitle(e.target.value);
     const selectedIndex = e.target.options.selectedIndex;
     setFileId(e.target.options[selectedIndex].getAttribute("data-key"));
   };
@@ -126,7 +124,7 @@ const SiteSound = ({ siteSoundItem, audioFiles, onRemove, refresh }) => {
     setCopyUrl(siteSoundItem.url);
     setUrls(siteSoundItem.url);
     setFileId(siteSoundItem.file_id);
-    setFilename(siteSoundItem.file_name);
+    setTitle(siteSoundItem.title);
   };
 
   return (
@@ -149,19 +147,19 @@ const SiteSound = ({ siteSoundItem, audioFiles, onRemove, refresh }) => {
         <DeleteModal sayYesOrNo={sayYesOrNo}></DeleteModal>
       ) : null}
 
-      <SelectSound value={filename} name="audiofiles" onChange={handleFilename}>
+      <SelectSound value={title} name="audiofiles" onChange={handleTitle}>
         {audioFiles.map((audioFile) => (
           <option
             key={audioFile.id}
-            value={audioFile.file_name}
+            value={audioFile.title}
             data-key={audioFile.id}
           >
-            {audioFile.file_name}
+            {audioFile.title}
           </option>
         ))}
       </SelectSound>
 
-      {copyUrl !== siteSoundItem.url || fileId != siteSoundItem.file_id ? (
+      {copyUrl !== siteSoundItem.url || fileId !== siteSoundItem.file_id ? (
         <Btns>
           <StyledBtn onClick={onSave}>
             <HoverImage src="/images/save.svg" alt="" />
@@ -172,7 +170,7 @@ const SiteSound = ({ siteSoundItem, audioFiles, onRemove, refresh }) => {
         </Btns>
       ) : (
         <Btns>
-          <HeadsetBtn src={siteSoundItem.file_location} len={10000}></HeadsetBtn>
+          <HeadsetBtn src={siteSoundItem.src} len={10000}></HeadsetBtn>
           <StyledBtn onClick={() => setDeleteModalIsOpen(true)}>
             <HoverImage src="/images/delete.svg" alt="" />
           </StyledBtn>

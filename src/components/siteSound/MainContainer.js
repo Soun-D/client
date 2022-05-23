@@ -22,9 +22,6 @@ const SiteSoundList = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   padding: 10px;
-  &::-webkit-scrollbar {
-    /* display: none; */
-  }
 `;
 
 const PlusBtn = styled.button`

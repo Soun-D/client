@@ -16,6 +16,10 @@ export const audioFileList = async (email) => {
   return axios.get(host + "/audio-file?email=" + email);
 };
 
+export const youtubeList = async (email) => {
+  return axios.get(host + "/youtube?email=" + email);
+};
+
 export const putSiteSound = async (siteSound) => {
   return axios.put(host + "/site-sound", siteSound);
 };
@@ -38,4 +42,8 @@ export const postMp3 = (formData) => {
 
 export const postSiteSound = (siteSound) => {
   return axios.post(host + "/site-sound", siteSound);
+};
+
+export const postYoutube = (youtube) => {
+  return axios.post(host + "/youtube", youtube);
 };

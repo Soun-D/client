@@ -1,8 +1,8 @@
 /*global chrome*/
 
 import "./App.css";
-import MainContainer from "./components/MainContainer";
-import Helper from "./components/Helper";
+import MainContainer from "./components/siteSound/MainContainer";
+import Helper from "./components/help/Helper";
 import Sidebar from "./components/Sidebar";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
@@ -10,10 +10,11 @@ import {
   deleteSiteSound,
   audioFileList,
   siteSoundList,
-} from "./components/api";
-import AudioList from "./components/AudioList";
+} from "./components/utils/api";
+import AudioList from "./components/audio/AudioList";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
-import Spinner from "./components/Spinner";
+import Spinner from "./components/utils/Spinner";
+import YoutubeList from "./components/youtube/YoutubeList";
 
 const M = styled.div`
   height: 400px;
@@ -29,23 +30,21 @@ const App = () => {
   const [refresh, setRefresh] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() =>
-    chrome.identity.getProfileUserInfo((profileUserInfo) =>
-      setEmail(profileUserInfo.email)
-    )
-  );
+  // useEffect(() =>
+  //   chrome.identity.getProfileUserInfo((profileUserInfo) =>
+  //     setEmail(profileUserInfo.email)
+  //   )
+  // );
+
+  useEffect(() => setEmail("kwakdh25@gmail.com"));
 
   useEffect(() => {
-    getUrls();
-    getAudioFiles();
+    getUrls()
+      .then(() => getAudioFiles())
+      .then(() => setLoading(false));
   }, [email, refresh]);
 
-  useEffect(() => {
-    setLoading(false);
-  }, [audioFiles, siteSounds]);
-
   const dataRefresh = () => {
-    setLoading(false);
     setRefresh(!refresh);
   };
 
@@ -67,6 +66,20 @@ const App = () => {
     setAudioFiles(response.data);
   };
 
+  const playYoutube = () => {
+    let url = chrome.runtime.getURL("/audio/youtube.html");
+
+    chrome.windows.create({
+      type: "popup",
+      focused: false,
+      top: 100,
+      left: 100,
+      height: 400,
+      width: 600,
+      url,
+    });
+  };
+
   return (
     <BrowserRouter>
       <M>
@@ -78,12 +91,15 @@ const App = () => {
               loading ? (
                 <Spinner />
               ) : (
-                <MainContainer
-                  SiteSoundItems={siteSounds}
-                  audioFiles={audioFiles}
-                  onRemove={onRemove}
-                  refresh={dataRefresh}
-                />
+                <>
+                  <MainContainer
+                    SiteSoundItems={siteSounds}
+                    audioFiles={audioFiles}
+                    onRemove={onRemove}
+                    refresh={dataRefresh}
+                  />
+                  <button onClick={playYoutube}></button>
+                </>
               )
             }
           />
@@ -106,7 +122,7 @@ const App = () => {
             path="/audio"
             element={
               loading ? (
-                <Spinner></Spinner>
+                <Spinner />
               ) : (
                 <AudioList
                   audioList={audioFiles}
@@ -116,6 +132,7 @@ const App = () => {
               )
             }
           />
+          <Route path="/youtube" element={<YoutubeList />}></Route>
           <Route path="/help" element={<Helper />}></Route>
         </Routes>
       </M>
