@@ -2,7 +2,7 @@ import axios from "axios";
 
 const host = "https://api.portfolist.kr";
 
-export const siteSoundList = async (email) => {
+export const getSiteSoundList = async (email) => {
   return axios.get(host + "/site-sound?email=" + email);
 };
 
@@ -12,11 +12,15 @@ export const deleteSiteSound = (siteSoundId) => {
   });
 };
 
-export const audioFileList = async (email) => {
+export const getAudioList = async (email) => {
   return axios.get(host + "/audio-file?email=" + email);
 };
 
-export const youtubeList = async (email) => {
+export const getBothAudioList = async (email) => {
+  return axios.get(host + "/audio-file/all?email=" + email);
+};
+
+export const getYoutubeList = async (email) => {
   return axios.get(host + "/youtube?email=" + email);
 };
 
@@ -30,7 +34,7 @@ export const deleteAudioFile = (audioFileId, email) => {
   });
 };
 
-export const postMp3 = (formData) => {
+export const postAudio = (formData) => {
   return axios.post(host + "/audio-file", formData, {
     config: {
       headers: {

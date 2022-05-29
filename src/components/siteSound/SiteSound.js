@@ -1,66 +1,11 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-import DeleteModal from "./DeleteModal";
-import Modal from "./Modal";
+import DeleteModal from "../modal/DeleteModal";
+import Modal from "../modal/Modal";
 import { putSiteSound } from "../utils/api";
-import HeadsetBtn from "../utils/HeadsetBtn";
+import { playAudio } from "../utils/play";
+import * as S from "./style/SiteSoundStyle";
 
-const StyledSsItem = styled.li`
-  list-style: none;
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  height: 51px;
-  width: 100%;
-  padding: 0px 0px 0px 10px;
-`;
-
-const StyledBtn = styled.button`
-  background: none;
-  border: none;
-  padding: 3px 3px 0px 0px;
-  box-sizing: border-box;
-`;
-
-const SelectSound = styled.select`
-  position: absolute;
-  bottom: 15px;
-  left: 225px;
-  width: 187px;
-  height: 20px;
-`;
-
-const Btns = styled.div`
-  display: flex;
-`;
-
-const IconZoomIn = styled(StyledBtn)`
-  position: absolute;
-  bottom: 9px;
-  left: 195px;
-  border: solid 1px black;
-  padding: 1px;
-`;
-
-const HoverImage = styled.img`
-  border-radius: 10px;
-  transition: all ease 1s;
-  &:hover {
-    background-color: lightgray;
-    transform: rotate(360deg);
-  }
-`;
-
-const UrlSpan = styled.span`
-  word-break: break-all;
-  width: 177px;
-  height: 40;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  border: 1px solid black;
-`;
-
-const SiteSound = ({ siteSoundItem, audioFiles, onRemove, refresh }) => {
+const SiteSound = ({ siteSoundItem, audioList, onRemove, refresh }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
 
@@ -77,15 +22,12 @@ const SiteSound = ({ siteSoundItem, audioFiles, onRemove, refresh }) => {
   };
 
   const onUrlChange = (e) => {
-    if (e.target.value !== copyUrl)
-      setUrls(e.target.value);
+    if (e.target.value !== copyUrl) setUrls(e.target.value);
   };
 
   const sayYesOrNo = (choice) => {
     setDeleteModalIsOpen(false);
-    if (choice) {
-      onRemove(siteSoundItem.id);
-    }
+    if (choice) onRemove(siteSoundItem.id);
   };
 
   const onModalSave = () => {
@@ -128,11 +70,11 @@ const SiteSound = ({ siteSoundItem, audioFiles, onRemove, refresh }) => {
   };
 
   return (
-    <StyledSsItem>
-      <UrlSpan>{urls}</UrlSpan>
-      <IconZoomIn onClick={() => setModalIsOpen(true)}>
+    <S.SiteSoundItem>
+      <S.Urls>{urls}</S.Urls>
+      <S.EditBtn onClick={() => setModalIsOpen(true)}>
         <img src="/images/edit.svg" alt="" />
-      </IconZoomIn>
+      </S.EditBtn>
 
       {modalIsOpen ? (
         <Modal
@@ -147,36 +89,52 @@ const SiteSound = ({ siteSoundItem, audioFiles, onRemove, refresh }) => {
         <DeleteModal sayYesOrNo={sayYesOrNo}></DeleteModal>
       ) : null}
 
-      <SelectSound value={title} name="audiofiles" onChange={handleTitle}>
-        {audioFiles.map((audioFile) => (
-          <option
-            key={audioFile.id}
-            value={audioFile.title}
-            data-key={audioFile.id}
-          >
-            {audioFile.title}
+      <S.AudioSelect value={title} name="audioList" onChange={handleTitle}>
+        {audioList.map((audio) => (
+          <option key={audio.id} value={audio.title} data-key={audio.id}>
+            {audio.is_youtube ? audio.title + "⏩" : audio.title}
           </option>
         ))}
-      </SelectSound>
+      </S.AudioSelect>
 
       {copyUrl !== siteSoundItem.url || fileId !== siteSoundItem.file_id ? (
-        <Btns>
-          <StyledBtn onClick={onSave}>
-            <HoverImage src="/images/save.svg" alt="" />
-          </StyledBtn>
-          <StyledBtn onClick={onCancel}>
-            <HoverImage src="/images/취소.svg" alt="" />
-          </StyledBtn>
-        </Btns>
+        <div>
+          <S.DefaultBtn onClick={onSave}>
+            <S.HoverImg src="/images/save.svg" alt="" />
+          </S.DefaultBtn>
+          <S.DefaultBtn onClick={onCancel}>
+            <S.HoverImg src="/images/취소.svg" alt="" />
+          </S.DefaultBtn>
+        </div>
       ) : (
-        <Btns>
-          <HeadsetBtn src={siteSoundItem.src} len={10000}></HeadsetBtn>
-          <StyledBtn onClick={() => setDeleteModalIsOpen(true)}>
-            <HoverImage src="/images/delete.svg" alt="" />
-          </StyledBtn>
-        </Btns>
+        <div>
+          {siteSoundItem.is_youtube ? (
+            <S.PlayBtn
+              onClick={() => {
+                playAudio(
+                  "youtube",
+                  siteSoundItem.src,
+                  siteSoundItem.play_time
+                );
+              }}
+            >
+              <img src="/images/yotube_icon.png" alt="" />
+            </S.PlayBtn>
+          ) : (
+            <S.DefaultBtn
+              onClick={() => {
+                playAudio("audio", siteSoundItem.src, siteSoundItem.play_time);
+              }}
+            >
+              <S.HoverImg src="/images/headphone.svg" />
+            </S.DefaultBtn>
+          )}
+          <S.DefaultBtn onClick={() => setDeleteModalIsOpen(true)}>
+            <S.HoverImg src="/images/delete.svg" alt="" />
+          </S.DefaultBtn>
+        </div>
       )}
-    </StyledSsItem>
+    </S.SiteSoundItem>
   );
 };
 

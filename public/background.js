@@ -9,24 +9,44 @@ chrome.identity.getProfileUserInfo(async (profileUserInfo) => {
     const siteSoundList = await response.json();
     if (changeInfo.status == "loading") {
       siteSoundList.forEach((ss) => {
-        if (changeInfo.url == ss.url) playSound(ss.file_location);
+        if (changeInfo.url == ss.url) {
+          if (ss.is_youtube) {
+            playYoutube(ss.src, ss.play_time);
+          } else if (!ss.is_youtube) {
+            playSound(ss.src, ss.play_time);
+          }
+        }
       });
     }
   });
 });
 
-function playSound(src) {
+const playYoutube = (src, closeTime) => {
+  let url = chrome.runtime.getURL("/audio/youtube.html");
+
+    url += `?src=${src}&len=${closeTime}`
+
+    chrome.windows.create({
+      type: "popup",
+      focused: false,
+      top: 1,
+      left: 1,
+      height: 400,
+      width: 600,
+      url,
+    });
+}
+
+const playSound = (src, closeTime) => {
   let url = chrome.runtime.getURL("/audio/audio.html");
 
-  // set this string dynamically in your code, this is just an example
-  // this will play success.wav at half the volume and close the popup after a second
-  url += `?volume=1&src=${src}&length=10000`;
+  url += `?volume=1&src=${src}&length=${closeTime}`;
 
   chrome.windows.create({
     type: "popup",
     focused: false,
     top: 1,
-    left: 1928,
+    left: 1,
     height: 1,
     width: 1,
     url,

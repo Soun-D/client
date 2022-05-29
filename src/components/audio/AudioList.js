@@ -1,74 +1,35 @@
-import React, { useRef, useState } from "react";
-import styled from "styled-components";
-import { deleteAudioFile, postMp3 } from '../utils/api';
-import HeadsetBtn from '../utils/HeadsetBtn';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { deleteAudioFile, getAudioList, postAudio } from "../utils/api";
+import { playAudio } from "../utils/play";
+import Spinner from "../utils/Spinner";
+import * as S from "./style/style";
 
-const AudioContainer = styled.div`
-  width: 100%;
-  position: relative;
-`;
-
-const AudioItem = styled.div`
-  display: flex;
-  position: relative;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 40px;
-  border: 1px solid black;
-`;
-
-const CancelBtn = styled.button`
-  background: none;
-  border: none;
-  padding: 3px 3px 0px 0px;
-  box-sizing: border-box;
-  left: 500px;
-  position: absolute;
-`;
-
-const HoverImage = styled.img`
-  border-radius: 10px;
-  transition: all ease 1s;
-  &:hover {
-    background-color: lightgray;
-    transform: rotate(360deg);
-  }
-`;
-
-const TitleB = styled.b`
-  margin-right: 10px;
-`;
-
-const PlusBtn = styled.button`
-  position: absolute;
-  width: 50%;
-  height: 40px;
-  bottom: 0;
-  left: 240px;
-  background-color: white;
-  color: black;
-  font-weight: bold;
-  font-size: 20px;
-  border: 1px solid black;
-  border-radius: 20px;
-  margin: 0px 0px 1px 38px;
-  cursor: pointer;
-`;
-
-const InputFile = styled.input`
-  position: absolute;
-  bottom: 0;
-`;
-
-const AudioList = ({ audioList, email, refresh }) => {
+const AudioList = ({ email }) => {
   const [file, setFile] = useState();
+  const [audioList, setAudioList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fileInput = useRef();
 
+  const setData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const audioRes = await getAudioList(email);
+      setAudioList(audioRes.data);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+  }, [email]);
+
+  useEffect(() => {
+    setData();
+  }, [setData]);
+
   const onRemove = (audioFileId) => {
     deleteAudioFile(audioFileId, email)
-      .then(() => refresh())
+      .then(() => setData())
       .catch((error) => {
         if (error.response.status === 400) {
           alert("연결된 URL이 있으므로 삭제할 수 없습니다");
@@ -103,16 +64,16 @@ const AudioList = ({ audioList, email, refresh }) => {
         [
           JSON.stringify({
             email: email,
-            play_time: 10000
+            play_time: 10000,
           }),
         ],
         { type: "application/json" }
       )
     );
 
-    postMp3(formData)
+    postAudio(formData)
       .then(() => {
-        refresh();
+        setData();
         fileInput.current.value = "";
       })
       .catch((error) => {
@@ -127,28 +88,38 @@ const AudioList = ({ audioList, email, refresh }) => {
   };
 
   return (
-    <AudioContainer>
-      {audioList.map((audio) => {
-        return (
-          <AudioItem key={audio.id}>
-            <TitleB>{audio.title}</TitleB>
-            <HeadsetBtn src={audio.src} len={audio.play_time}></HeadsetBtn>
-            <CancelBtn onClick={() => onRemove(audio.id)}>
-              <HoverImage src="/images/x.svg" alt="" />
-            </CancelBtn>
-          </AudioItem>
-        );
-      })}
-      <InputFile
+    <S.AudioContainer>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        audioList.map((audio) => {
+          return (
+            <S.AudioItem key={audio.id}>
+              <S.Title>{audio.title}</S.Title>
+              <S.StyledBtn
+                onClick={() => {
+                  playAudio("audio", audio.src, audio.play_time);
+                }}
+              >
+                <S.HoverImage src="/images/headphone.svg" />
+              </S.StyledBtn>
+              <S.CancelBtn onClick={() => onRemove(audio.id)}>
+                <S.HoverImage src="/images/x.svg" alt="" />
+              </S.CancelBtn>
+            </S.AudioItem>
+          );
+        })
+      )}
+      <S.InputFile
         type="file"
         accept=".mp3, .m4a"
         onChange={handleFileInput}
         ref={fileInput}
-      ></InputFile>
-      <PlusBtn onClick={handleFilePost}>
+      ></S.InputFile>
+      <S.PlusBtn onClick={handleFilePost}>
         <img src="/images/add_icon.svg" alt=""></img>
-      </PlusBtn>
-    </AudioContainer>
+      </S.PlusBtn>
+    </S.AudioContainer>
   );
 };
 

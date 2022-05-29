@@ -23,9 +23,5 @@
     "32": "/images/soun-d-icon32.png",
     "48": "/images/soun-d-icon48.png",
     "128": "/images/soun-d-icon128.png"
-  },
-  "content_security_policy": {
-    "extension_pages": "/audio/youtube.html",
-    "sandbox": "sandbox 'unsafe-inline'"
   }
 }

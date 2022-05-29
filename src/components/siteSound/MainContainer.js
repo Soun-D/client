@@ -1,80 +1,93 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import SiteSound from "./SiteSound";
-import styled from "styled-components";
 import SiteSoundInsert from "./SiteSoundInsert";
+import {
+  getBothAudioList,
+  getSiteSoundList,
+  deleteSiteSound,
+} from "../utils/api";
+import Spinner from "../utils/Spinner";
+import * as S from "./style/MainStyle";
 
-const Main = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
-const Columns = styled.section`
-  display: flex;
-  justify-content: space-around;
-  height: 30px;
-  width: 468px;
-  font-weight: bold;
-`;
-
-const SiteSoundList = styled.div`
-  height: 240px;
-  width: 530px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 10px;
-`;
-
-const PlusBtn = styled.button`
-  position: absolute;
-  width: 100%;
-  height: 40px;
-  bottom: 0;
-  background-color: black;
-  color: white;
-  cursor: pointer;
-`;
-
-const MainContainer = ({ SiteSoundItems, audioFiles, onRemove, refresh }) => {
+const MainContainer = ({ email }) => {
   const [isEdit, setIsEdit] = useState(false);
+  const [siteSoundList, setSiteSoundList] = useState([]);
+  const [audioList, setAudioList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const mainRef = useRef();
 
-  const onEditSiteSound = () => {
-    setIsEdit(true);
-  };
+  const setData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+
+      const bothAudioRes = await getBothAudioList(email);
+      setAudioList(bothAudioRes.data);
+      const siteSoundRes = await getSiteSoundList(email);
+      setSiteSoundList(siteSoundRes.data);
+
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  }, [email]);
 
   useEffect(() => {
-    mainRef.current.scrollTo(0, (SiteSoundItems.length + 1) * 51 * isEdit);
-  }, [isEdit]);
+    setData();
+  }, [setData]);
+
+  useEffect(() => {
+    mainRef.current.scrollTo(0, (siteSoundList.length + 1) * 51 * isEdit);
+  }, [siteSoundList, isEdit]);
+
+  const onRemove = (siteSoundId) => {
+    deleteSiteSound(siteSoundId).then(() =>
+      setSiteSoundList(
+        siteSoundList.filter((siteSound) => siteSound.id !== siteSoundId)
+      )
+    );
+  };
 
   return (
-    <Main>
-      <Columns>
-        <span styles="margin-right: 40px;">URL(S)</span>
+    <S.Main>
+      <S.Columns>
+        <span>URL(S)</span>
         <span>SOUND</span>
-      </Columns>
-      <SiteSoundList ref={mainRef}>
-        {SiteSoundItems.map((SiteSoundItem) => (
-          <SiteSound
-            siteSoundItem={SiteSoundItem}
-            audioFiles={audioFiles}
-            key={SiteSoundItem.id}
-            onRemove={onRemove}
-            refresh={refresh}
-          />
-        ))}
-        {isEdit ? (
-          <SiteSoundInsert
-            onRemove={() => {
-              setIsEdit(false);
-            }}
-            audioFiles={audioFiles}
-            refresh={refresh}
-          ></SiteSoundInsert>
-        ) : null}
-      </SiteSoundList>
-      <PlusBtn onClick={onEditSiteSound}>+</PlusBtn>
-    </Main>
+      </S.Columns>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <S.SiteSoundList ref={mainRef}>
+          {siteSoundList.map((siteSoundItem) => (
+            <SiteSound
+              siteSoundItem={siteSoundItem}
+              audioList={audioList}
+              key={siteSoundItem.id}
+              onRemove={onRemove}
+              refresh={setData}
+            />
+          ))}
+          {isEdit ? (
+            <SiteSoundInsert
+              onRemove={() => {
+                setIsEdit(false);
+              }}
+              audioList={audioList}
+              refresh={setData}
+            />
+          ) : null}
+        </S.SiteSoundList>
+      )}
+      <S.PlusBtn
+        onClick={() => {
+          console.log("set true");
+          setIsEdit(true);
+        }}
+      >
+        +
+      </S.PlusBtn>
+    </S.Main>
   );
 };
 

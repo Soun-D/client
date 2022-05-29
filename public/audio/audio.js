@@ -8,5 +8,5 @@ onload = () => {
     audio.play();
     setTimeout(()=>{
         close();
-    }, urlParams.get('length'));
+    }, urlParams.get('len'));
 }

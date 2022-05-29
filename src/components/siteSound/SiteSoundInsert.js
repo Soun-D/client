@@ -1,64 +1,10 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-import Modal from "./Modal";
+import * as S from "./style/SiteSoundStyle";
+import Modal from "../modal/Modal";
 import { postSiteSound } from "../utils/api";
 
-const StyledSsItem = styled.li`
-  list-style: none;
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  height: 51px;
-  width: 100%;
-  padding: 0px 0px 0px 10px;
-`;
 
-const StyledBtn = styled.button`
-  background: none;
-  border: none;
-  padding: 3px 3px 0px 0px;
-  box-sizing: border-box;
-`;
-
-const SelectSound = styled.select`
-  position: absolute;
-  bottom: 15px;
-  left: 225px;
-  width: 187px;
-  height: 20px;
-`;
-
-const Btns = styled.div`
-  display: flex;
-`;
-
-const IconZoomIn = styled(StyledBtn)`
-  position: absolute;
-  bottom: 9px;
-  left: 195px;
-  border: solid 1px black;
-  padding: 1px;
-`;
-
-const HoverImage = styled.img`
-  border-radius: 10px;
-  transition: all ease 1s;
-  &:hover {
-    background-color: lightgray;
-    transform: rotate(360deg);
-  }
-`;
-
-const UrlSpan = styled.span`
-  word-break: break-all;
-  width: 177px;
-  height: 40;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  border: 1px solid black;
-`;
-
-const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
+const SiteSoundInsert = ({ onRemove, audioList, refresh }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [fileId, setFileId] = useState("");
   const [urls, setUrls] = useState("");
@@ -71,7 +17,6 @@ const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
   const onUrlChange = (e) => {
     if (e.target.value.length > 2000) {
       alert("최대 2000자 까지 입력할 수 있습니다!");
-      setUrls(e.target.value.substr(0, 2000));
     } else {
       setUrls(e.target.value);
     }
@@ -106,11 +51,11 @@ const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
   };
 
   return (
-    <StyledSsItem>
-      <UrlSpan>{urls}</UrlSpan>
-      <IconZoomIn onClick={() => setModalIsOpen(true)}>
+    <S.NewSiteSound>
+      <S.Urls>{urls}</S.Urls>
+      <S.EditBtn onClick={() => setModalIsOpen(true)}>
         <img src="/images/edit.svg" alt="" />
-      </IconZoomIn>
+      </S.EditBtn>
       {modalIsOpen ? (
         <Modal
           onUrlChange={onUrlChange}
@@ -124,27 +69,22 @@ const SiteSoundInsert = ({ onRemove, audioFiles, refresh }) => {
           urls={urls}
         ></Modal>
       ) : null}
-      <SelectSound defaultValue="" name="audiofiles" onChange={handleSelect}>
-        <option disabled hidden value=""></option>
-        {audioFiles.map((audioFile) => (
-          <option
-            key={audioFile.id}
-            value={audioFile.title}
-            data-key={audioFile.id}
-          >
-            {audioFile.title}
+      <S.AudioSelect defaultValue="" name="audioList" onChange={handleSelect}>
+        {audioList.map((audio) => (
+          <option key={audio.id} value={audio.title} data-key={audio.id}>
+            {audio.is_youtube ? audio.title + "⏩" : audio.title}
           </option>
         ))}
-      </SelectSound>
-      <Btns>
-        <StyledBtn onClick={saveSiteSound}>
-          <HoverImage src="/images/save.svg" alt="" />
-        </StyledBtn>
-        <StyledBtn onClick={onRemove}>
-          <HoverImage src="/images/x.svg" alt="" />
-        </StyledBtn>
-      </Btns>
-    </StyledSsItem>
+      </S.AudioSelect>
+      <div>
+        <S.DefaultBtn onClick={saveSiteSound}>
+          <S.HoverImg src="/images/save.svg" alt="" />
+        </S.DefaultBtn>
+        <S.DefaultBtn onClick={onRemove}>
+          <S.HoverImg src="/images/delete.svg" alt="" />
+        </S.DefaultBtn>
+      </div>
+    </S.NewSiteSound>
   );
 };
 
