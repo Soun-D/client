@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { deleteAudioFile, getYoutubeList } from "../utils/api";
-import { playAudio } from "../utils/play";
 import Spinner from "../utils/Spinner";
 import YoutubeInsert from "./YoutubeInsert";
 import * as S from "./style/style";
+import YoutubeItem from "./YoutubeItem";
 
 const YoutubeList = ({ email }) => {
   const [isEdit, setIsEdit] = useState(false);
@@ -47,28 +47,12 @@ const YoutubeList = ({ email }) => {
       ) : (
         youtubeList.map((youtube) => {
           return (
-            <S.YoutubeItem key={youtube.id}>
-              <S.Title>{youtube.title}</S.Title>
-              <S.PlayTime>{youtube.play_time}초</S.PlayTime>
-              Visible : {youtube.visible ? "true": "false"}
-              <S.Btns>
-                <S.StyledBtn
-                  onClick={() =>
-                    playAudio(
-                      "youtube",
-                      youtube.src,
-                      youtube.play_time,
-                      youtube.visible
-                    )
-                  }
-                >
-                  <S.HoverImage src="/images/yotube_icon.png" alt="" />
-                </S.StyledBtn>
-                <S.StyledBtn onClick={() => onRemove(youtube.id)}>
-                  <S.HoverImage src="/images/x.svg" alt="" />
-                </S.StyledBtn>
-              </S.Btns>
-            </S.YoutubeItem>
+            <YoutubeItem
+              key={youtube.id}
+              youtube={youtube}
+              onRemove={onRemove}
+              refresh={setData}
+            />
           );
         })
       )}
@@ -90,7 +74,6 @@ const YoutubeList = ({ email }) => {
       >
         +
       </S.PlusBtn>
-
     </S.AudioContainer>
   );
 };

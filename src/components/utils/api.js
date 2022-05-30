@@ -51,3 +51,7 @@ export const postSiteSound = (siteSound) => {
 export const postYoutube = (youtube) => {
   return axios.post(host + "/youtube", youtube);
 };
+
+export const putYoutube = (youtube) => {
+  return axios.put(host + "/youtube", youtube);
+};

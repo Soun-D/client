@@ -81,7 +81,7 @@ export const InsertBtns = styled(Btns)`
   width: 200px;
 `;
 
-export const HoverImage = styled.img`
+export const HoverImg = styled.img`
   border-radius: 10px;
   transition: all ease 1s;
   &:hover {

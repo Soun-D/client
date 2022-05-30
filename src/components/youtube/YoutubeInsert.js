@@ -42,7 +42,7 @@ const YoutubeInsert = ({ email, onRemove, refresh }) => {
   };
 
   const onSaveYoutube = () => {
-    if (title.replace(/ /g, "") && closeTime && iframe) {
+    if (title.replace(/ /g, "") && closeTime < 301 && iframe) {
       postYoutube({
         email: email,
         src: iframe.outerHTML,
@@ -97,11 +97,11 @@ const YoutubeInsert = ({ email, onRemove, refresh }) => {
             name="title"
             value={title}
             onChange={onChange}
-          ></S.TitleInput>
+          />
           Visible
           <S.VisibleInput name="visible" type="checkbox" onChange={onVisible} />
         </S.Inputs1>
-        PlayTime
+        PlayTime (max: 300)
         <S.CloseTimeInput
           type="number"
           name="closeTime"
@@ -115,7 +115,7 @@ const YoutubeInsert = ({ email, onRemove, refresh }) => {
       <S.InsertBtns>
         <S.EditBtn onClick={() => setModalIsOpen(true)}>
           Iframe
-          <S.HoverImage src="/images/edit.svg" alt="" />
+          <S.HoverImg src="/images/edit.svg" alt="" />
         </S.EditBtn>
 
         <S.StyledBtn
@@ -125,15 +125,15 @@ const YoutubeInsert = ({ email, onRemove, refresh }) => {
             playAudio("youtube", iframe.outerHTML, closeTime, visible);
           }}
         >
-          <S.HoverImage src="/images/playBtn.svg" alt="" />
+          <S.HoverImg src="/images/playBtn.svg" alt="" />
         </S.StyledBtn>
 
         <S.StyledBtn onClick={onSaveYoutube}>
-          <S.HoverImage src="/images/save.svg" alt="" />
+          <S.HoverImg src="/images/save.svg" alt="" />
         </S.StyledBtn>
 
         <S.StyledBtn onClick={onRemove}>
-          <S.HoverImage src="/images/x.svg" alt="" />
+          <S.HoverImg src="/images/x.svg" alt="" />
         </S.StyledBtn>
       </S.InsertBtns>
 
