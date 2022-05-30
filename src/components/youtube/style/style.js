@@ -5,7 +5,7 @@ export const AudioContainer = styled.div`
   position: relative;
 `;
 
-export const FileName = styled.b`
+export const Title = styled.b`
   margin-right: 10px;
   width: 200px;
 `;
@@ -23,14 +23,27 @@ export const PlusBtn = styled.button`
 export const YoutubeItem = styled.div`
   display: flex;
   position: relative;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   width: 100%;
   height: 40px;
   border-bottom: 1px solid black;
 `;
 
-export const IframeInput = styled.input`
+export const YoutubeInsertItem = styled(YoutubeItem)`
+  height: 80px;
+`;
+
+export const VisibleInput = styled.input``;
+
+export const Inputs1 = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const TitleInput = styled.input`
   word-break: break-all;
   font-size: 20px;
   width: 200px;
@@ -38,6 +51,7 @@ export const IframeInput = styled.input`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  margin: 10px;
 `;
 
 export const EditBtn = styled.button`
@@ -57,10 +71,14 @@ export const StyledBtn = styled.button`
 `;
 
 export const Btns = styled.div`
-  width: 200px;
+  width: 100px;
   display: flex;
   justify-content: space-around;
   align-items: center;
+`;
+
+export const InsertBtns = styled(Btns)`
+  width: 200px;
 `;
 
 export const HoverImage = styled.img`
@@ -74,6 +92,7 @@ export const HoverImage = styled.img`
 
 export const CloseTimeInput = styled.input`
   width: 60px;
+  margin: 0px 10px 0px 10px;
 `;
 
 export const PlayTime = styled.span`

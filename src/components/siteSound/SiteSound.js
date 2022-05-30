@@ -9,35 +9,47 @@ const SiteSound = ({ siteSoundItem, audioList, onRemove, refresh }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
 
-  const [urls, setUrls] = useState(siteSoundItem.url);
-  const [fileId, setFileId] = useState(siteSoundItem.file_id);
-  const [title, setTitle] = useState(siteSoundItem.title);
+  const [inputs, setInputs] = useState({
+    urls: siteSoundItem.url,
+    fileId: siteSoundItem.file_id,
+    title: siteSoundItem.title,
+    copyUrl: siteSoundItem.url,
+  });
 
-  const [copyUrl, setCopyUrl] = useState(siteSoundItem.url);
+  const { urls, fileId, title, copyUrl } = inputs;
 
   const handleTitle = (e) => {
-    setTitle(e.target.value);
     const selectedIndex = e.target.options.selectedIndex;
-    setFileId(e.target.options[selectedIndex].getAttribute("data-key"));
+    setInputs({
+      ...inputs,
+      title: e.target.value,
+      fileId: e.target.options[selectedIndex].getAttribute("data-key"),
+    });
   };
 
-  const onUrlChange = (e) => {
-    if (e.target.value !== copyUrl) setUrls(e.target.value);
-  };
-
-  const sayYesOrNo = (choice) => {
-    setDeleteModalIsOpen(false);
-    if (choice) onRemove(siteSoundItem.id);
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setInputs({
+      ...inputs,
+      [name]: value,
+    });
   };
 
   const onModalSave = () => {
-    setCopyUrl(urls);
     setModalIsOpen(false);
+    setInputs({
+      ...inputs,
+      copyUrl: urls,
+    });
   };
 
-  const onClickBackground = () => {
-    setModalIsOpen(false);
-    setUrls(copyUrl);
+  const onReset = () => {
+    setInputs({
+      urls: siteSoundItem.url,
+      fileId: siteSoundItem.file_id,
+      title: siteSoundItem.title,
+      copyUrl: siteSoundItem.url,
+    });
   };
 
   const onSave = () => {
@@ -62,13 +74,6 @@ const SiteSound = ({ siteSoundItem, audioList, onRemove, refresh }) => {
       });
   };
 
-  const onCancel = () => {
-    setCopyUrl(siteSoundItem.url);
-    setUrls(siteSoundItem.url);
-    setFileId(siteSoundItem.file_id);
-    setTitle(siteSoundItem.title);
-  };
-
   return (
     <S.SiteSoundItem>
       <S.Urls>{urls}</S.Urls>
@@ -77,16 +82,18 @@ const SiteSound = ({ siteSoundItem, audioList, onRemove, refresh }) => {
       </S.EditBtn>
 
       {modalIsOpen ? (
-        <Modal
-          urls={urls}
-          onUrlChange={onUrlChange}
-          onClose={onClickBackground}
-          onSave={onModalSave}
-        ></Modal>
+        <Modal urls={urls} onChange={onChange} onSave={onModalSave}></Modal>
       ) : null}
 
       {deleteModalIsOpen ? (
-        <DeleteModal sayYesOrNo={sayYesOrNo}></DeleteModal>
+        <DeleteModal
+          onClose={() => {
+            setDeleteModalIsOpen(false);
+          }}
+          onRemove={() => {
+            onRemove(siteSoundItem.id);
+          }}
+        ></DeleteModal>
       ) : null}
 
       <S.AudioSelect value={title} name="audioList" onChange={handleTitle}>
@@ -102,7 +109,7 @@ const SiteSound = ({ siteSoundItem, audioList, onRemove, refresh }) => {
           <S.DefaultBtn onClick={onSave}>
             <S.HoverImg src="/images/save.svg" alt="" />
           </S.DefaultBtn>
-          <S.DefaultBtn onClick={onCancel}>
+          <S.DefaultBtn onClick={onReset}>
             <S.HoverImg src="/images/취소.svg" alt="" />
           </S.DefaultBtn>
         </div>
@@ -118,7 +125,7 @@ const SiteSound = ({ siteSoundItem, audioList, onRemove, refresh }) => {
                 );
               }}
             >
-              <img src="/images/yotube_icon.png" alt="" />
+              <S.HoverImg src="/images/yotube_icon.png" alt="" />
             </S.PlayBtn>
           ) : (
             <S.DefaultBtn
@@ -129,6 +136,7 @@ const SiteSound = ({ siteSoundItem, audioList, onRemove, refresh }) => {
               <S.HoverImg src="/images/headphone.svg" />
             </S.DefaultBtn>
           )}
+
           <S.DefaultBtn onClick={() => setDeleteModalIsOpen(true)}>
             <S.HoverImg src="/images/delete.svg" alt="" />
           </S.DefaultBtn>

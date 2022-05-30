@@ -2,14 +2,19 @@ import React, { useState } from "react";
 import { postYoutube } from "../utils/api";
 import Modal from "../modal/Modal";
 import * as S from "./style/style";
-import { playAudio } from '../utils/play';
+import { playAudio } from "../utils/play";
 
 const YoutubeInsert = ({ email, onRemove, refresh }) => {
-  const [title, setTitle] = useState("");
-  const [iframe, setIframe] = useState("");
-  const [closeTime, setCloseTime] = useState();
-
   const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const [inputs, setInputs] = useState({
+    title: "",
+    iframe: "",
+    closeTime: 0,
+    visible: false,
+  });
+
+  const { title, iframe, closeTime, visible } = inputs;
 
   const checkYoutubeIframe = (e) => {
     const template = document.createElement("template");
@@ -17,17 +22,22 @@ const YoutubeInsert = ({ email, onRemove, refresh }) => {
     template.innerHTML = youtubeIframe;
     let iframeTag = template.content.firstChild;
 
-    if (iframeTag.hasAttribute("src")) {
+    try {
       let iframeSrc = iframeTag.getAttribute("src");
 
-      if (iframeSrc.includes("?start=")) {
+      if (iframeSrc.includes("?start="))
         iframeTag.setAttribute("src", (iframeSrc += "&autoplay=1"));
-      } else {
-        iframeTag.setAttribute("src", (iframeSrc += "?autoplay=1"));
-      }
-      setIframe(iframeTag);
-    } else {
-      setIframe("");
+      else iframeTag.setAttribute("src", (iframeSrc += "?autoplay=1"));
+
+      setInputs({
+        ...inputs,
+        iframe: iframeTag,
+      });
+    } catch (error) {
+      setInputs({
+        ...inputs,
+        iframe: "",
+      });
     }
   };
 
@@ -37,7 +47,8 @@ const YoutubeInsert = ({ email, onRemove, refresh }) => {
         email: email,
         src: iframe.outerHTML,
         title: title,
-        play_time: closeTime * 1000,
+        play_time: closeTime,
+        visible: visible,
       })
         .then(() => {
           onRemove();
@@ -53,61 +64,87 @@ const YoutubeInsert = ({ email, onRemove, refresh }) => {
           }
         });
     } else {
-      alert("모든 값을 다 정확히 입력해주세요");
+      alert("모든 값을 정확히 입력해주세요");
     }
   };
 
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setInputs({
+      ...inputs,
+      [name]: value,
+    });
+  };
+
+  const onVisible = (e) => {
+    setInputs({
+      ...inputs,
+      visible: e.target.checked,
+    });
+  };
+
+  const onCloseModal = () => {
+    setModalIsOpen(false);
+  };
+
   return (
-    <S.YoutubeItem>
-      TITLE
-      <S.IframeInput
-        type="text"
-        onChange={(e) => {
-          setTitle(e.target.value);
-        }}
-      ></S.IframeInput>
-      Playtime
-      <S.CloseTimeInput
-        type="number"
-        min={1}
-        max="600"
-        onChange={(e) => {
-          setCloseTime(e.target.value * 1000);
-        }}
-      ></S.CloseTimeInput>
-      {modalIsOpen ? (
-        <Modal
-          onUrlChange={checkYoutubeIframe}
-          onClose={() => {
-            setModalIsOpen(false);
-            setIframe("");
-          }}
-          onSave={() => {
-            setModalIsOpen(false);
-          }}
-          urls={iframe.outerHTML}
-        ></Modal>
-      ) : null}
-      <S.Btns>
+    <S.YoutubeInsertItem>
+      <div>
+        <S.Inputs1>
+          TITLE
+          <S.TitleInput
+            type="text"
+            name="title"
+            value={title}
+            onChange={onChange}
+          ></S.TitleInput>
+          Visible
+          <S.VisibleInput name="visible" type="checkbox" onChange={onVisible} />
+        </S.Inputs1>
+        PlayTime
+        <S.CloseTimeInput
+          type="number"
+          name="closeTime"
+          min="1"
+          max="300"
+          checked
+          value={closeTime}
+          onChange={onChange}
+        />
+      </div>
+      <S.InsertBtns>
         <S.EditBtn onClick={() => setModalIsOpen(true)}>
           Iframe
           <S.HoverImage src="/images/edit.svg" alt="" />
         </S.EditBtn>
+
         <S.StyledBtn
+          disabled={!iframe}
+          style={iframe ? {} : { backgroundColor: "gray" }}
           onClick={() => {
-            playAudio("youtube", iframe, closeTime);
+            playAudio("youtube", iframe.outerHTML, closeTime, visible);
           }}
         >
-          <S.HoverImage src="/images/playBtn.png" alt="" />
+          <S.HoverImage src="/images/playBtn.svg" alt="" />
         </S.StyledBtn>
+
         <S.StyledBtn onClick={onSaveYoutube}>
           <S.HoverImage src="/images/save.svg" alt="" />
         </S.StyledBtn>
+
         <S.StyledBtn onClick={onRemove}>
           <S.HoverImage src="/images/x.svg" alt="" />
         </S.StyledBtn>
-      </S.Btns>
-    </S.YoutubeItem>
+      </S.InsertBtns>
+
+      {modalIsOpen ? (
+        <Modal
+          onChange={checkYoutubeIframe}
+          onSave={onCloseModal}
+          urls={iframe.outerHTML}
+        />
+      ) : null}
+    </S.YoutubeInsertItem>
   );
 };
 

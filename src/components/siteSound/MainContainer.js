@@ -37,10 +37,6 @@ const MainContainer = ({ email }) => {
     setData();
   }, [setData]);
 
-  useEffect(() => {
-    mainRef.current.scrollTo(0, (siteSoundList.length + 1) * 51 * isEdit);
-  }, [siteSoundList, isEdit]);
-
   const onRemove = (siteSoundId) => {
     deleteSiteSound(siteSoundId).then(() =>
       setSiteSoundList(
@@ -81,7 +77,7 @@ const MainContainer = ({ email }) => {
       )}
       <S.PlusBtn
         onClick={() => {
-          console.log("set true");
+          mainRef.current.scrollTo(0, (siteSoundList.length + 1) * 51 * isEdit);
           setIsEdit(true);
         }}
       >

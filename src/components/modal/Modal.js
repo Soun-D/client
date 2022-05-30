@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from "react";
 import * as S from "./style/style";
 
-const Modal = ({ urls, onUrlChange, onClose, onSave }) => {
+const Modal = ({ urls, onChange, onSave }) => {
   const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
     setInputValue(urls);
-  }, []);
+  }, [urls]);
 
   return (
     <S.Background
       onClick={() => {
-        onClose();
+        onSave();
       }}
     >
       <S.ModalContainer onClick={(e) => e.stopPropagation()}>
         <S.UrlInput
+          name="urls"
+          value={urls}
           placeholder="If you want to enter multiple URLs, separate them with comma"
           defaultValue={inputValue}
-          onChange={onUrlChange}
+          onChange={onChange}
           maxLength="2000"
-        ></S.UrlInput>
-        <S.CloseIcon onClick={onSave}>
-          <img src="/images/save.svg" alt="" />
-        </S.CloseIcon>
+        />
       </S.ModalContainer>
     </S.Background>
   );

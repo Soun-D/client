@@ -30,6 +30,7 @@ const SiteSoundInsert = ({ onRemove, audioList, refresh }) => {
       alert("오디오 파일을 업로드하거나 목록에서 선택해주세요");
       return;
     }
+
     postSiteSound({
       url: urls,
       audio_file_id: fileId,
@@ -58,18 +59,15 @@ const SiteSoundInsert = ({ onRemove, audioList, refresh }) => {
       </S.EditBtn>
       {modalIsOpen ? (
         <Modal
-          onUrlChange={onUrlChange}
-          onClose={() => {
-            setModalIsOpen(false);
-            setUrls("");
-          }}
+          onChange={onUrlChange}
           onSave={() => {
             setModalIsOpen(false);
           }}
           urls={urls}
         ></Modal>
       ) : null}
-      <S.AudioSelect defaultValue="" name="audioList" onChange={handleSelect}>
+      <S.AudioSelect defaultValue="" onChange={handleSelect}>
+        <option value="" selected disabled hidden />
         {audioList.map((audio) => (
           <option key={audio.id} value={audio.title} data-key={audio.id}>
             {audio.is_youtube ? audio.title + "⏩" : audio.title}

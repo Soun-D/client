@@ -48,14 +48,18 @@ const YoutubeList = ({ email }) => {
         youtubeList.map((youtube) => {
           return (
             <S.YoutubeItem key={youtube.id}>
-              TITLE :
-              <S.FileName>{youtube.title}</S.FileName>
-              PlayTime :
-              <S.PlayTime>{youtube.play_time/1000}초</S.PlayTime>
+              <S.Title>{youtube.title}</S.Title>
+              <S.PlayTime>{youtube.play_time}초</S.PlayTime>
+              Visible : {youtube.visible ? "true": "false"}
               <S.Btns>
                 <S.StyledBtn
                   onClick={() =>
-                    playAudio("youtube", youtube.src, youtube.play_time)
+                    playAudio(
+                      "youtube",
+                      youtube.src,
+                      youtube.play_time,
+                      youtube.visible
+                    )
                   }
                 >
                   <S.HoverImage src="/images/yotube_icon.png" alt="" />
@@ -68,6 +72,7 @@ const YoutubeList = ({ email }) => {
           );
         })
       )}
+
       {isEdit ? (
         <YoutubeInsert
           email={email}
@@ -77,6 +82,7 @@ const YoutubeList = ({ email }) => {
           refresh={setData}
         />
       ) : null}
+
       <S.PlusBtn
         onClick={() => {
           setIsEdit(true);
@@ -84,6 +90,7 @@ const YoutubeList = ({ email }) => {
       >
         +
       </S.PlusBtn>
+
     </S.AudioContainer>
   );
 };

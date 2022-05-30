@@ -64,7 +64,7 @@ const AudioList = ({ email }) => {
         [
           JSON.stringify({
             email: email,
-            play_time: 10000,
+            play_time: 10,
           }),
         ],
         { type: "application/json" }
