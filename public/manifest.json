@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Soun-D",
-  "description": "You can upload MP3, M4A files and play sound when the URL matches when you access the website.",
-  "version": "0.0.0.1",
+  "description": "You can play .mp3, .m4a and YOUTUBE when the URL matches when you access the website.",
+  "version": "0.0.1.0",
   "background": {
     "service_worker": "./background.js"
   },
