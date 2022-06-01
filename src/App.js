@@ -21,13 +21,13 @@ const M = styled.div`
 const App = () => {
   const [email, setEmail] = useState("");
 
-  // useEffect(() =>
-  //   chrome.identity.getProfileUserInfo((profileUserInfo) =>
-  //     setEmail(profileUserInfo.email)
-  //   )
-  // );
+  useEffect(() =>
+    chrome.identity.getProfileUserInfo((profileUserInfo) =>
+      setEmail(profileUserInfo.email)
+    )
+  );
 
-  useEffect(() => setEmail("kwakdh25@gmail.com"), []);
+  // useEffect(() => setEmail("kwakdh25@gmail.com"), []);
 
   return (
     <BrowserRouter>
