@@ -11,6 +11,7 @@ const YoutubeItem = ({ youtube, onRemove, refresh }) => {
     visible: youtube.visible,
     src: youtube.src,
     is_youtube: youtube.is_youtube,
+    start: youtube.start,
   });
 
   const { id, title, play_time, visible, src } = inputs;
@@ -100,7 +101,7 @@ const YoutubeItem = ({ youtube, onRemove, refresh }) => {
         onChange={onVisible}
       />
       <S.StyledBtn
-        onClick={() => playAudio("youtube", src, play_time, visible)}
+        onClick={() => playAudio("youtube", src, play_time, visible, youtube.start)}
       >
         <S.HoverImg src="/images/yotube_icon.png" alt="" />
       </S.StyledBtn>

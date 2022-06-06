@@ -6,6 +6,7 @@ import { playAudio } from "../utils/play";
 
 const YoutubeInsert = ({ email, onRemove, refresh }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [start, setStart] = useState("0");
 
   const [inputs, setInputs] = useState({
     title: "",
@@ -25,19 +26,28 @@ const YoutubeInsert = ({ email, onRemove, refresh }) => {
     try {
       let iframeSrc = iframeTag.getAttribute("src");
 
-      if (iframeSrc.includes("?start="))
-        iframeTag.setAttribute("src", (iframeSrc += "&autoplay=1"));
-      else iframeTag.setAttribute("src", (iframeSrc += "?autoplay=1"));
+      if (iframeSrc.includes("?start=")) {
+        const strStart = iframeSrc.match(/\?start=[0-9]+/)["0"];
+        setStart(strStart.match(/[0-9]+/)["0"]);
+        iframeSrc = iframeSrc.replace(/\?start=[0-9]+/i, "");
+      } else {
+        setStart("0");
+      }
+
+      iframeSrc += "?autoplay=1";
+      iframeTag.setAttribute("src", iframeSrc);
 
       setInputs({
         ...inputs,
         iframe: iframeTag,
       });
     } catch (error) {
+      console.log(error);
       setInputs({
         ...inputs,
         iframe: "",
       });
+      setStart("0");
     }
   };
 
@@ -49,6 +59,7 @@ const YoutubeInsert = ({ email, onRemove, refresh }) => {
         title: title,
         play_time: closeTime,
         visible: visible,
+        start: start,
       })
         .then(() => {
           onRemove();
@@ -122,7 +133,7 @@ const YoutubeInsert = ({ email, onRemove, refresh }) => {
           disabled={!iframe}
           style={iframe ? {} : { backgroundColor: "gray" }}
           onClick={() => {
-            playAudio("youtube", iframe.outerHTML, closeTime, visible);
+            playAudio("youtube", iframe.outerHTML, closeTime, visible, start);
           }}
         >
           <S.HoverImg src="/images/playBtn.svg" alt="" />

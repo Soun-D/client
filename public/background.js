@@ -11,7 +11,7 @@ chrome.identity.getProfileUserInfo(async (profileUserInfo) => {
       siteSoundList.forEach((ss) => {
         if (changeInfo.url == ss.url) {
           if (ss.is_youtube) {
-            playYoutube(ss.src, ss.play_time, ss.visible);
+            playYoutube(ss.src, ss.play_time, ss.visible, ss.start);
           } else if (!ss.is_youtube) {
             playSound(ss.src, ss.play_time);
           }
@@ -21,21 +21,23 @@ chrome.identity.getProfileUserInfo(async (profileUserInfo) => {
   });
 });
 
-const playYoutube = (src, closeTime, visible) => {
+const playYoutube = (src, closeTime, visible, start) => {
   let url = chrome.runtime.getURL("/audio/youtube.html");
 
-    url += `?src=${src}&len=${closeTime * 1000}`
+  url += `?src=${src}&len=${closeTime * 1000}`;
 
-    chrome.windows.create({
-      type: "popup",
-      focused: false,
-      top: 1,
-      left: visible ? 1325 : 1785,
-      height: visible ? 400 : 1,
-      width: visible ? 600 : 1,
-      url,
-    });
-}
+  url += `&start=${start > 0 ? start : 1}`;
+
+  chrome.windows.create({
+    type: "popup",
+    focused: false,
+    top: 1,
+    left: visible ? 1325 : 1785,
+    height: visible ? 400 : 1,
+    width: visible ? 600 : 1,
+    url,
+  });
+};
 
 const playSound = (src, closeTime) => {
   let url = chrome.runtime.getURL("/audio/audio.html");
@@ -51,4 +53,4 @@ const playSound = (src, closeTime) => {
     width: 1,
     url,
   });
-}
+};

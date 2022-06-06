@@ -121,7 +121,9 @@ const SiteSound = ({ siteSoundItem, audioList, onRemove, refresh }) => {
                 playAudio(
                   "youtube",
                   siteSoundItem.src,
-                  siteSoundItem.play_time
+                  siteSoundItem.play_time,
+                  siteSoundItem.visible,
+                  siteSoundItem.start
                 );
               }}
             >
