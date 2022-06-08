@@ -34,7 +34,8 @@ const YoutubeInsert = ({ email, onRemove, refresh }) => {
         setStart("0");
       }
 
-      iframeSrc += "?autoplay=1";
+      if (!iframeSrc.includes("?autoplay=1"))
+        iframeSrc += "?autoplay=1";
       iframeTag.setAttribute("src", iframeSrc);
 
       setInputs({
