@@ -5,7 +5,14 @@ import { putSiteSound } from "../utils/api";
 import { playAudio } from "../utils/play";
 import * as S from "./style/SiteSoundStyle";
 
-const SiteSound = ({ siteSoundItem, audioList, onRemove, refresh }) => {
+const SiteSound = ({
+  siteSoundItem,
+  audioList,
+  onRemove,
+  refresh,
+  isPlaying,
+  setIsPlaying,
+}) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
 
@@ -118,13 +125,20 @@ const SiteSound = ({ siteSoundItem, audioList, onRemove, refresh }) => {
           {siteSoundItem.is_youtube ? (
             <S.PlayBtn
               onClick={() => {
-                playAudio(
-                  "youtube",
-                  siteSoundItem.src,
-                  siteSoundItem.play_time,
-                  siteSoundItem.visible,
-                  siteSoundItem.start
-                );
+                if (!isPlaying) {
+                  playAudio(
+                    "youtube",
+                    siteSoundItem.src,
+                    siteSoundItem.play_time,
+                    siteSoundItem.visible,
+                    siteSoundItem.start
+                  );
+                  setIsPlaying(true);
+                  setTimeout(
+                    () => setIsPlaying(false),
+                    siteSoundItem.play_time * 1000
+                  );
+                }
               }}
             >
               <S.HoverImg src="/images/yotube_icon.png" alt="" />

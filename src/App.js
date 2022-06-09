@@ -20,6 +20,7 @@ const M = styled.div`
 
 const App = () => {
   const [email, setEmail] = useState("");
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() =>
     chrome.identity.getProfileUserInfo((profileUserInfo) =>
@@ -34,12 +35,36 @@ const App = () => {
       <M>
         <Sidebar />
         <Routes>
-          <Route path="/index.html" element={<MainContainer email={email} />} />
+          <Route
+            path="/index.html"
+            element={
+              <MainContainer
+                email={email}
+                isPlaying={isPlaying}
+                setIsPlaying={setIsPlaying}
+              />
+            }
+          />
           <Route path="/" element={<Spinner />} />
-          <Route path="/audio" element={<AudioList email={email} />} />
+          <Route
+            path="/audio"
+            element={
+              <AudioList
+                email={email}
+                isPlaying={isPlaying}
+                setIsPlaying={setIsPlaying}
+              />
+            }
+          />
           <Route
             path="/youtube"
-            element={<YoutubeList email={email} />}
+            element={
+              <YoutubeList
+                email={email}
+                isPlaying={isPlaying}
+                setIsPlaying={setIsPlaying}
+              />
+            }
           ></Route>
           <Route path="/help" element={<Helper />}></Route>
         </Routes>

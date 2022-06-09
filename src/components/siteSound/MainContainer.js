@@ -9,7 +9,7 @@ import {
 import Spinner from "../utils/Spinner";
 import * as S from "./style/MainStyle";
 
-const MainContainer = ({ email }) => {
+const MainContainer = ({ email, isPlaying, setIsPlaying }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [siteSoundList, setSiteSoundList] = useState([]);
   const [audioList, setAudioList] = useState([]);
@@ -62,6 +62,8 @@ const MainContainer = ({ email }) => {
               key={siteSoundItem.id}
               onRemove={onRemove}
               refresh={setData}
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
             />
           ))}
           {isEdit ? (

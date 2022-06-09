@@ -3,7 +3,7 @@ import * as S from "./style/style";
 import { playAudio } from "../utils/play";
 import { putYoutube } from "../utils/api";
 
-const YoutubeItem = ({ youtube, onRemove, refresh }) => {
+const YoutubeItem = ({ youtube, onRemove, refresh, isPlaying, setIsPlaying }) => {
   const [inputs, setInputs] = useState({
     id: youtube.id,
     title: youtube.title,
@@ -101,7 +101,14 @@ const YoutubeItem = ({ youtube, onRemove, refresh }) => {
         onChange={onVisible}
       />
       <S.StyledBtn
-        onClick={() => playAudio("youtube", src, play_time, visible, youtube.start)}
+        onClick={() => {
+          console.log(isPlaying);
+          if (!isPlaying) {
+            playAudio("youtube", src, play_time, visible, youtube.start);
+            setIsPlaying(true);
+            setTimeout(() => setIsPlaying(false), play_time * 1000);
+          }
+        }}
       >
         <S.HoverImg src="/images/yotube_icon.png" alt="" />
       </S.StyledBtn>

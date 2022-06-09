@@ -5,7 +5,7 @@ import YoutubeInsert from "./YoutubeInsert";
 import * as S from "./style/style";
 import YoutubeItem from "./YoutubeItem";
 
-const YoutubeList = ({ email }) => {
+const YoutubeList = ({ email, isPlaying, setIsPlaying }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [youtubeList, setYoutubeList] = useState([]);
@@ -52,6 +52,8 @@ const YoutubeList = ({ email }) => {
               youtube={youtube}
               onRemove={onRemove}
               refresh={setData}
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
             />
           );
         })

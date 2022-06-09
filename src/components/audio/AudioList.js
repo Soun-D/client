@@ -4,7 +4,7 @@ import { playAudio } from "../utils/play";
 import Spinner from "../utils/Spinner";
 import * as S from "./style/style";
 
-const AudioList = ({ email }) => {
+const AudioList = ({ email, isPlaying, setIsPlaying }) => {
   const [file, setFile] = useState();
   const [audioList, setAudioList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -98,7 +98,14 @@ const AudioList = ({ email }) => {
               <S.Title>{audio.title}</S.Title>
               <S.StyledBtn
                 onClick={() => {
-                  playAudio("audio", audio.src, audio.play_time);
+                  if (!isPlaying) {
+                    playAudio("audio", audio.src, audio.play_time);
+                    setIsPlaying(true);
+                    setTimeout(
+                      () => setIsPlaying(false),
+                      audio.play_time * 1000
+                    );
+                  }
                 }}
               >
                 <S.HoverImage src="/images/headphone.svg" />
