@@ -102,7 +102,6 @@ const YoutubeItem = ({ youtube, onRemove, refresh, isPlaying, setIsPlaying }) =>
       />
       <S.StyledBtn
         onClick={() => {
-          console.log(isPlaying);
           if (!isPlaying) {
             playAudio("youtube", src, play_time, visible, youtube.start);
             setIsPlaying(true);
